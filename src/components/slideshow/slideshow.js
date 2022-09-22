@@ -18,6 +18,9 @@ import { Swiper } from 'swiper/bundle';
 //eslint-disable-next-line import/no-unresolved
 import 'swiper/css/bundle';
 import screenfull from 'screenfull';
+import actionSheet from '../actionSheet/actionSheet';
+import globalize from '../../scripts/globalize';
+import { currentSettings as userSettings } from '../../scripts/settings/userSettings';
 
 /**
  * Name of transition event.
@@ -193,6 +196,7 @@ export default function (options) {
                 html += '<div class="slideshowBottomBar hide">';
 
                 html += getIcon('play_arrow', 'btnSlideshowPause slideshowButton', true, true);
+                html += getIcon('timer', 'btnAutoplayDelay', true, true);
                 if (appHost.supports('filedownload') && options.user && options.user.Policy.EnableContentDownloading) {
                     html += getIcon('file_download', 'btnDownload slideshowButton', true);
                 }
@@ -223,6 +227,13 @@ export default function (options) {
             const btnPause = dialog.querySelector('.btnSlideshowPause');
             if (btnPause) {
                 btnPause.addEventListener('click', getClickHandler(playPause));
+            }
+
+            const btnAutoplayDelay = dialog.querySelector('.btnAutoplayDelay');
+            if (btnAutoplayDelay) {
+                btnAutoplayDelay.addEventListener('click', function (e) {
+                    showAutoplayDelayMenu(e.target);
+                });
             }
 
             const btnDownload = dialog.querySelector('.btnDownload');
@@ -278,12 +289,53 @@ export default function (options) {
     }
 
     /**
-     * Handles OSD changes when the autoplay is started.
+     * Opens actionSheetOptions to show possible delay timings
+     * On selection, saves that delay selection, starting autoplay if necessary.
+     * @param {Object} button Location of button to open menu at
      */
-    function onAutoplayStart() {
+    function showAutoplayDelayMenu(button) {
+        const delayLengths = [1, 3, 5, 10, 15];
+        const items = delayLengths.map(length => {
+            return {
+                id: length * 1000,
+                name: globalize.translate('ValueSeconds', length)
+            };
+        });
+
+        const actionSheetOptions = {
+            items,
+            positionTo: button
+        };
+
+        actionSheet.show(actionSheetOptions).then(
+            (result) => updateAutoplayDelay(result)
+        ).catch(() => { /* swallow errors */ });
+    }
+
+    /**
+     * Updates autoplay delay length.
+     * Starts autoplay.
+     * Saves delay to userSettings.
+     * @param {string} delay Length of delay for autoplay in ms
+     */
+    function updateAutoplayDelay(delay) {
+        if (delay) {
+            swiperInstance.params.autoplay.delay = delay;
+            swiperInstance.autoplay.start();
+            userSettings.set('autoplayDelay', delay, true);
+        }
+    }
+
+    /**
+     * Handles OSD changes when the autoplay is started and applies custom delay if necessary.
+     */
+    function onAutoplayStart(autoplayDelay) {
         const btnSlideshowPause = dialog.querySelector('.btnSlideshowPause .material-icons');
         if (btnSlideshowPause) {
             btnSlideshowPause.classList.replace('play_arrow', 'pause');
+        }
+        if (autoplayDelay) {
+            swiperInstance.params.autoplay.delay = autoplayDelay;
         }
     }
 
@@ -345,6 +397,9 @@ export default function (options) {
             slides = currentOptions.items;
         }
 
+        const autoplayDelay = userSettings.get('autoplayDelay', true) || 3000;
+        const autoplay = !options.interactive || options.autoplay ? { delay: autoplayDelay } : false;
+
         swiperInstance = new Swiper(dialog.querySelector('.slideshowSwiperContainer'), {
             direction: 'horizontal',
             // Loop is disabled due to the virtual slides option not supporting it.
@@ -353,7 +408,7 @@ export default function (options) {
                 minRatio: 1,
                 toggle: true
             },
-            autoplay: !options.interactive || !!options.autoplay,
+            autoplay: autoplay,
             keyboard: {
                 enabled: true
             },
@@ -376,14 +431,14 @@ export default function (options) {
             }
         });
 
-        swiperInstance.on('autoplayStart', onAutoplayStart);
+        swiperInstance.on('autoplayStart', () => onAutoplayStart(autoplayDelay));
         swiperInstance.on('autoplayStop', onAutoplayStop);
 
         if (useFakeZoomImage) {
             swiperInstance.on('zoomChange', onZoomChange);
         }
 
-        if (swiperInstance.autoplay?.running) onAutoplayStart();
+        if (swiperInstance.autoplay?.running) onAutoplayStart(autoplayDelay);
     }
 
     /**
