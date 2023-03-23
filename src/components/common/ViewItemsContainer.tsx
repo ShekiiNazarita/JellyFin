@@ -38,7 +38,8 @@ const getDefaultSortBy = () => {
 const getFields = (viewQuerySettings: ViewQuerySettings) => {
     const fields: ItemFields[] = [
         ItemFields.BasicSyncInfo,
-        ItemFields.MediaSourceCount
+        ItemFields.MediaSourceCount,
+        ItemFields.SpecialFeatureCount
     ];
 
     if (viewQuerySettings.imageType === 'primary') {

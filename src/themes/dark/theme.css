@@ -311,6 +311,7 @@ html {
 .countIndicator,
 .fullSyncIndicator,
 .mediaSourceIndicator,
+.specialFeatureIndicator,
 .playedIndicator {
     background: #00a4dc;
 }

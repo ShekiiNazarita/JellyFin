@@ -73,7 +73,7 @@ export default function (view, params, tabContent) {
             SortOrder: 'Ascending',
             IncludeItemTypes: 'Series',
             Recursive: true,
-            Fields: 'PrimaryImageAspectRatio,MediaSourceCount,BasicSyncInfo',
+            Fields: 'PrimaryImageAspectRatio,MediaSourceCount,BasicSyncInfo,SpecialFeatureCount',
             ImageTypeLimit: 1,
             EnableImageTypes: enableImageTypes,
             Limit: limit,
