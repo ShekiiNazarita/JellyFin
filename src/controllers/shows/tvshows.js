@@ -22,7 +22,7 @@ export default function (view, params, tabContent) {
                     SortOrder: 'Ascending',
                     IncludeItemTypes: 'Series',
                     Recursive: true,
-                    Fields: 'PrimaryImageAspectRatio,BasicSyncInfo',
+                    Fields: 'PrimaryImageAspectRatio,BasicSyncInfo,MediaSourceCount,SpecialFeatureCount',
                     ImageTypeLimit: 1,
                     EnableImageTypes: 'Primary,Backdrop,Banner,Thumb',
                     StartIndex: 0
