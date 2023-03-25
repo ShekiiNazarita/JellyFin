@@ -425,9 +425,12 @@ a[data-role=button] {
 .countIndicator,
 .fullSyncIndicator,
 .mediaSourceIndicator,
-.specialFeatureIndicator,
 .playedIndicator {
     background: rgb(12, 232, 214);
+}
+
+.specialFeatureIndicator {
+    color: rgb(12, 232, 214);
 }
 
 .fullSyncIndicator {

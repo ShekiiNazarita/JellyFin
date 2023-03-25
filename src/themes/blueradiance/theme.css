@@ -338,9 +338,12 @@ a[data-role=button] {
 .countIndicator,
 .fullSyncIndicator,
 .mediaSourceIndicator,
-.specialFeatureIndicator,
 .playedIndicator {
     background: #00a4dc;
+}
+
+.specialFeatureIndicator {
+    color: #00a4dc;
 }
 
 .fullSyncIndicator {
