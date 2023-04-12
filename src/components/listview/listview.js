@@ -283,15 +283,15 @@ export function getListViewHtml(options) {
             }
 
             const mediaSourceCount = item.MediaSourceCount || 1;
-            const SpecialFeatureCount = item.SpecialFeatureCount || 0;
+            const specialFeatureCount = item.SpecialFeatureCount || 0;
 
-            if ((mediaSourceCount > 1 || SpecialFeatureCount > 0) && options.disableIndicators !== true) {
+            if ((mediaSourceCount > 1 || specialFeatureCount > 0) && options.disableIndicators !== true) {
                 html += '<div class="cardMediaIndicators">';
                 if (mediaSourceCount > 1) {
                     html += '<div class="indicator countIndicator mediaSourceIndicator">' + mediaSourceCount + '</div>';
                 }
 
-                if (SpecialFeatureCount > 0) {
+                if (specialFeatureCount > 0) {
                     // countIndicator specialFeatureIndicator
                     html += '<div class="indicator specialFeatureIndicator"><span class="material-icons indicatorIcon movie" aria-hidden="true"></span></div>';
                 }
