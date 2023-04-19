@@ -69,6 +69,10 @@ import LibraryMenu from '../scripts/libraryMenu';
             query.IsAiring = false;
         }
 
+        if (userSettings.libraryPageSize() === 0){
+            query.Limit = 0;
+        }
+
         return modifyQueryWithFilters(instance, query);
     }
 
@@ -244,10 +248,6 @@ import LibraryMenu from '../scripts/libraryMenu';
         }
 
         if (params.type === 'Programs') {
-            if (params.IsAiring === 'true') {
-                return apiClient.getLiveTvRecommendedPrograms(getInitialLiveTvQuery(instance, params, startIndex, limit));
-            }
-
             return apiClient.getLiveTvPrograms(getInitialLiveTvQuery(instance, params, startIndex, limit));
         }
 
