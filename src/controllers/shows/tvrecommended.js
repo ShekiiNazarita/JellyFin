@@ -101,7 +101,7 @@ function loadResume(view, userId, parentId) {
         Filters: 'IsResumable',
         Limit: screenWidth >= 1600 ? 5 : 3,
         Recursive: true,
-        Fields: 'PrimaryImageAspectRatio,MediaSourceCount,BasicSyncInfo',
+        Fields: 'PrimaryImageAspectRatio,MediaSourceCount,BasicSyncInfo,SpecialFeatureCount',
         CollapseBoxSetItems: false,
         ParentId: parentId,
         ImageTypeLimit: 1,
@@ -179,7 +179,7 @@ function loadNextUp(view, userId, parentId) {
     const query = {
         userId: userId,
         Limit: 24,
-        Fields: 'PrimaryImageAspectRatio,DateCreated,BasicSyncInfo,MediaSourceCount',
+        Fields: 'PrimaryImageAspectRatio,DateCreated,BasicSyncInfo,MediaSourceCount,SpecialFeatureCount',
         ParentId: parentId,
         ImageTypeLimit: 1,
         EnableImageTypes: 'Primary,Backdrop,Thumb',

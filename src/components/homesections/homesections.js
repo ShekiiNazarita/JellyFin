@@ -590,7 +590,7 @@ function getNextUpFetchFn(serverId, userSettings) {
         oldestDateForNextUp.setDate(oldestDateForNextUp.getDate() - userSettings.maxDaysForNextUp());
         return apiClient.getNextUpEpisodes({
             Limit: enableScrollX() ? 24 : 15,
-            Fields: 'PrimaryImageAspectRatio,DateCreated,BasicSyncInfo,Path,MediaSourceCount',
+            Fields: 'PrimaryImageAspectRatio,DateCreated,BasicSyncInfo,Path,MediaSourceCount,SpecialFeatureCount',
             UserId: apiClient.getCurrentUserId(),
             ImageTypeLimit: 1,
             EnableImageTypes: 'Primary,Backdrop,Banner,Thumb',
