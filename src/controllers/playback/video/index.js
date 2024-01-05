@@ -20,6 +20,7 @@ import '../../../elements/emby-slider/emby-slider';
 import '../../../elements/emby-button/paper-icon-button-light';
 import '../../../elements/emby-ratingbutton/emby-ratingbutton';
 import '../../../styles/videoosd.scss';
+import playerepisodeselector from '../../../components/playback/playerepisodeselector';
 import ServerConnections from '../../../components/ServerConnections';
 import shell from '../../../scripts/shell';
 import SubtitleSync from '../../../components/subtitlesync/subtitlesync';
@@ -135,10 +136,15 @@ export default function (view) {
             programStartDateMs = 0;
             programEndDateMs = 0;
         }
-
+        const episodeSelector = view.querySelector('.btnSelectEpisode');
+        episodeSelector.classList.add('hide');
+        if (displayItem.Type === 'Episode') {
+            playerepisodeselector.fillSeriesData(displayItem, () => {
+                episodeSelector.classList.remove('hide');
+            });
+        }
         // Set currently playing item for favorite button
         const btnUserRating = view.querySelector('.btnUserRating');
-
         if (itemHelper.canRate(currentItem)) {
             btnUserRating.classList.remove('hide');
             btnUserRating.setItem(currentItem);
@@ -1014,6 +1020,13 @@ export default function (view) {
         });
     }
 
+    function showEpisodeSelector() {
+        const player = currentPlayer;
+        const state = playbackManager.getPlayerState(player);
+        const item = state.NowPlayingItem;
+        playerepisodeselector.showEpisodeSelector(item.SeasonId, this);
+    }
+
     function showSecondarySubtitlesMenu(actionsheet, positionTo) {
         const player = currentPlayer;
         if (!playbackManager.playerHasSecondarySubtitleSupport(player)) return;
@@ -1331,6 +1344,9 @@ export default function (view) {
     }
 
     function onWheel(e) {
+        if (getOpenedDialog()) {
+            return;
+        }
         if (e.deltaY < 0) {
             playbackManager.volumeUp(currentPlayer);
         }
@@ -1755,6 +1771,7 @@ export default function (view) {
     btnFastForward.addEventListener('click', function () {
         playbackManager.fastForward(currentPlayer);
     });
+    view.querySelector('.btnSelectEpisode').addEventListener('click', showEpisodeSelector);
     view.querySelector('.btnAudio').addEventListener('click', showAudioTrackSelection);
     view.querySelector('.btnSubtitles').addEventListener('click', showSubtitleTrackSelection);
 
