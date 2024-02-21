@@ -79,6 +79,7 @@
 - [Kevin Tan (Valius)](https://github.com/valius)
 - [Rasmus Krämer](https://github.com/rasmuslos)
 - [ntarelix](https://github.com/ntarelix)
+- [StableCrimson](https://github.com/StableCrimson)
 
 ## Emby Contributors
 
