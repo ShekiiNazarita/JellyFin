@@ -3371,7 +3371,7 @@ class PlaybackManager {
 
                 apiClient.getCurrentUser().then(function (user) {
                     if (user.Configuration.EnableNextEpisodeAutoPlay || nextMediaType !== MediaType.Video) {
-                        self.nextTrack();
+                        self.nextTrack(newPlayer);
                     }
                 });
             }
