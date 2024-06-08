@@ -63,14 +63,6 @@
     <div class="fieldDescription checkboxFieldDescription">${LabelEnableRealtimeMonitorHelp}</div>
 </div>
 
-<div class="checkboxContainer checkboxContainer-withDescription chkUseReplayGainTagsContainer advanced">
-    <label>
-        <input type="checkbox" is="emby-checkbox" class="chkUseReplayGainTags" checked />
-        <span>${LabelUseReplayGainTags}</span>
-    </label>
-    <div class="fieldDescription checkboxFieldDescription">${LabelUseReplayGainTagsHelp}</div>
-</div>
-
 <div class="checkboxContainer checkboxContainer-withDescription chkEnableLUFSScanContainer advanced">
     <label>
         <input type="checkbox" is="emby-checkbox" class="chkEnableLUFSScan" checked />
@@ -199,5 +191,17 @@
             <span>${SaveSubtitlesIntoMediaFolders}</span>
         </label>
         <div class="fieldDescription checkboxFieldDescription">${SaveSubtitlesIntoMediaFoldersHelp}</div>
+    </div>
+</div>
+
+<div class="lyricSettingsSection hide">
+    <h2>${Lyrics}</h2>
+
+    <div class="checkboxContainer checkboxContainer-withDescription advanced">
+        <label>
+            <input type="checkbox" is="emby-checkbox" id="chkSaveLyricsLocally" />
+            <span>${SaveLyricsIntoMediaFolders}</span>
+        </label>
+        <div class="fieldDescription checkboxFieldDescription">${SaveLyricsIntoMediaFoldersHelp}</div>
     </div>
 </div>

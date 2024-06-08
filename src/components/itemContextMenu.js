@@ -169,12 +169,30 @@ export function getCommands(options) {
         });
     }
 
-    if (item.Type === 'Season' || item.Type == 'Series') {
-        commands.push({
-            name: globalize.translate('DownloadAll'),
-            id: 'downloadall',
-            icon: 'file_download'
-        });
+    if (appHost.supports('filedownload')) {
+        // CanDownload should probably be updated to return true for these items?
+        if (user.Policy.EnableContentDownloading && (item.Type === 'Season' || item.Type == 'Series')) {
+            commands.push({
+                name: globalize.translate('DownloadAll'),
+                id: 'downloadall',
+                icon: 'file_download'
+            });
+        }
+
+        // Books are promoted to major download Button and therefor excluded in the context menu
+        if (item.CanDownload && item.Type !== 'Book') {
+            commands.push({
+                name: globalize.translate('Download'),
+                id: 'download',
+                icon: 'file_download'
+            });
+
+            commands.push({
+                name: globalize.translate('CopyStreamURL'),
+                id: 'copy-stream',
+                icon: 'content_copy'
+            });
+        }
     }
 
     if (item.CanDelete && options.deleteItem !== false) {
@@ -183,21 +201,14 @@ export function getCommands(options) {
             id: 'delete',
             icon: 'delete'
         });
-    }
 
-    // Books are promoted to major download Button and therefor excluded in the context menu
-    if ((item.CanDownload && appHost.supports('filedownload')) && item.Type !== 'Book') {
-        commands.push({
-            name: globalize.translate('Download'),
-            id: 'download',
-            icon: 'file_download'
-        });
-
-        commands.push({
-            name: globalize.translate('CopyStreamURL'),
-            id: 'copy-stream',
-            icon: 'content_copy'
-        });
+        if (item.Type === 'Audio' && item.HasLyrics && window.location.href.includes(item.Id)) {
+            commands.push({
+                name: globalize.translate('DeleteLyrics'),
+                id: 'deleteLyrics',
+                icon: 'delete_sweep'
+            });
+        }
     }
 
     if (commands.length) {
@@ -272,11 +283,11 @@ export function getCommands(options) {
         });
     }
 
-    if (item.PlaylistItemId && options.playlistId) {
+    if (item.PlaylistItemId && options.playlistId && options.canEditPlaylist) {
         commands.push({
             name: globalize.translate('RemoveFromPlaylist'),
             id: 'removefromplaylist',
-            icon: 'remove'
+            icon: 'playlist_remove'
         });
     }
 
@@ -284,7 +295,7 @@ export function getCommands(options) {
         commands.push({
             name: globalize.translate('RemoveFromCollection'),
             id: 'removefromcollection',
-            icon: 'remove'
+            icon: 'playlist_remove'
         });
     }
 
@@ -310,6 +321,14 @@ export function getCommands(options) {
             name: globalize.translate('ViewAlbumArtist'),
             id: 'artist',
             icon: 'person'
+        });
+    }
+
+    if (item.HasLyrics) {
+        commands.push({
+            name: globalize.translate('ViewLyrics'),
+            id: 'lyrics',
+            icon: 'lyrics'
         });
     }
 
@@ -495,6 +514,9 @@ function executeCommand(item, id, options) {
             case 'delete':
                 deleteItem(apiClient, item).then(getResolveFunction(resolve, id, true, true), getResolveFunction(resolve, id));
                 break;
+            case 'deleteLyrics':
+                deleteLyrics(apiClient, item).then(getResolveFunction(resolve, id, true), getResolveFunction(resolve, id));
+                break;
             case 'share':
                 navigator.share({
                     title: item.Name,
@@ -510,6 +532,15 @@ function executeCommand(item, id, options) {
                 appRouter.showItem(item.AlbumArtists[0].Id, item.ServerId);
                 getResolveFunction(resolve, id)();
                 break;
+            case 'lyrics': {
+                if (options.isMobile) {
+                    appRouter.show('lyrics');
+                } else {
+                    appRouter.showItem(item.Id, item.ServerId);
+                }
+                getResolveFunction(resolve, id)();
+                break;
+            }
             case 'playallfromhere':
                 getResolveFunction(resolve, id)();
                 break;
@@ -636,6 +667,12 @@ function deleteItem(apiClient, item) {
     });
 }
 
+function deleteLyrics(apiClient, item) {
+    return import('../scripts/deleteHelper').then((deleteHelper) => {
+        return deleteHelper.deleteLyrics(item);
+    });
+}
+
 function refresh(apiClient, item) {
     import('./refreshdialog/refreshdialog').then(({ default: RefreshDialog }) => {
         new RefreshDialog({
@@ -662,6 +699,6 @@ export function show(options) {
 }
 
 export default {
-    getCommands: getCommands,
-    show: show
+    getCommands,
+    show
 };

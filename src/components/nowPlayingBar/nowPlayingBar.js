@@ -34,6 +34,7 @@ let positionSlider;
 let toggleAirPlayButton;
 let toggleRepeatButton;
 let toggleRepeatButtonIcon;
+let lyricButton;
 
 let lastUpdateTime = 0;
 let lastPlayerState = {};
@@ -41,6 +42,8 @@ let isEnabled;
 let currentRuntimeTicks = 0;
 
 let isVisibilityAllowed = true;
+
+let isLyricPageActive = false;
 
 function getNowPlayingBarHtml() {
     let html = '';
@@ -81,6 +84,8 @@ function getNowPlayingBarHtml() {
     html += '</div>';
 
     html += `<button is="paper-icon-button-light" class="btnAirPlay mediaButton" title="${globalize.translate('AirPlay')}"><span class="material-icons airplay" aria-hidden="true"></span></button>`;
+
+    html += `<button is="paper-icon-button-light" class="openLyricsButton mediaButton hide" title="${globalize.translate('Lyrics')}"><span class="material-icons lyrics" style="top:0.1em" aria-hidden="true"></span></button>`;
 
     html += `<button is="paper-icon-button-light" class="toggleRepeatButton mediaButton" title="${globalize.translate('Repeat')}"><span class="material-icons repeat" aria-hidden="true"></span></button>`;
     html += `<button is="paper-icon-button-light" class="btnShuffleQueue mediaButton" title="${globalize.translate('Shuffle')}"><span class="material-icons shuffle" aria-hidden="true"></span></button>`;
@@ -146,6 +151,7 @@ function bindEvents(elem) {
     toggleRepeatButton = elem.querySelector('.toggleRepeatButton');
     volumeSlider = elem.querySelector('.nowPlayingBarVolumeSlider');
     volumeSliderContainer = elem.querySelector('.nowPlayingBarVolumeSliderContainer');
+    lyricButton = nowPlayingBarElement.querySelector('.openLyricsButton');
 
     muteButton.addEventListener('click', function () {
         if (currentPlayer) {
@@ -209,6 +215,14 @@ function bindEvents(elem) {
     elem.querySelector('.btnShuffleQueue').addEventListener('click', function () {
         if (currentPlayer) {
             playbackManager.toggleQueueShuffleMode();
+        }
+    });
+
+    lyricButton.addEventListener('click', function() {
+        if (isLyricPageActive) {
+            appRouter.back();
+        } else {
+            appRouter.show('lyrics');
         }
     });
 
@@ -288,8 +302,8 @@ function getNowPlayingBar() {
     nowPlayingBarElement = parentContainer.querySelector('.nowPlayingBar');
 
     if (layoutManager.mobile) {
-        hideButton(nowPlayingBarElement.querySelector('.btnShuffleQueue'));
-        hideButton(nowPlayingBarElement.querySelector('.nowPlayingBarCenter'));
+        nowPlayingBarElement.querySelector('.btnShuffleQueue').classList.add('hide');
+        nowPlayingBarElement.querySelector('.nowPlayingBarCenter').classList.add('hide');
     }
 
     if (browser.safari && browser.slow) {
@@ -302,14 +316,6 @@ function getNowPlayingBar() {
     bindEvents(nowPlayingBarElement);
 
     return nowPlayingBarElement;
-}
-
-function showButton(button) {
-    button.classList.remove('hide');
-}
-
-function hideButton(button) {
-    button.classList.add('hide');
 }
 
 function updatePlayPauseState(isPaused) {
@@ -363,6 +369,7 @@ function updatePlayerStateInternal(event, state, player) {
     updateTimeDisplay(playState.PositionTicks, nowPlayingItem.RunTimeTicks, playbackManager.getBufferedRanges(player));
 
     updateNowPlayingInfo(state);
+    updateLyricButton(nowPlayingItem);
 }
 
 function updateRepeatModeDisplay(repeatMode) {
@@ -437,11 +444,7 @@ function updatePlayerVolumeState(isMuted, volumeLevel) {
         showVolumeSlider = false;
     }
 
-    if (showMuteButton) {
-        showButton(muteButton);
-    } else {
-        hideButton(muteButton);
-    }
+    muteButton.classList.toggle('hide', !showMuteButton);
 
     // See bindEvents for why this is necessary
     if (volumeSlider) {
@@ -451,6 +454,20 @@ function updatePlayerVolumeState(isMuted, volumeLevel) {
             volumeSlider.value = volumeLevel || 0;
         }
     }
+}
+
+function updateLyricButton(item) {
+    if (!isEnabled) return;
+
+    const hasLyrics = !!item && item.Type === 'Audio' && item.HasLyrics;
+    lyricButton.classList.toggle('hide', !hasLyrics);
+    setLyricButtonActiveStatus();
+}
+
+function setLyricButtonActiveStatus() {
+    if (!isEnabled) return;
+
+    lyricButton.classList.toggle('buttonActive', isLyricPageActive);
 }
 
 function seriesImageUrl(item, options) {
@@ -585,7 +602,7 @@ function updateNowPlayingInfo(state) {
                     });
                 });
             }
-            nowPlayingUserData.innerHTML = '<button is="emby-ratingbutton" type="button" class="listItemButton mediaButton paper-icon-button-light" data-id="' + item.Id + '" data-serverid="' + item.ServerId + '" data-itemtype="' + item.Type + '" data-likes="' + likes + '" data-isfavorite="' + (userData.IsFavorite) + '"><span class="material-icons favorite" aria-hidden="true"></span></button>';
+            nowPlayingUserData.innerHTML = '<button is="emby-ratingbutton" type="button" class="mediaButton paper-icon-button-light" data-id="' + item.Id + '" data-serverid="' + item.ServerId + '" data-itemtype="' + item.Type + '" data-likes="' + likes + '" data-isfavorite="' + (userData.IsFavorite) + '"><span class="material-icons favorite" aria-hidden="true"></span></button>';
         });
     } else {
         nowPlayingUserData.innerHTML = '';
@@ -595,6 +612,7 @@ function updateNowPlayingInfo(state) {
 function onPlaybackStart(e, state) {
     console.debug('nowplaying event: ' + e.type);
     const player = this;
+
     onStateChanged.call(player, e, state);
 }
 
@@ -698,6 +716,7 @@ function onStateChanged(event, state) {
     }
 
     getNowPlayingBar();
+    updateLyricButton(state.NowPlayingItem);
     updatePlayerStateInternal(event, state, player);
 }
 
@@ -754,6 +773,7 @@ function refreshFromPlayer(player, type) {
 }
 
 function bindToPlayer(player) {
+    isLyricPageActive = appRouter.currentRouteInfo.path.toLowerCase() === '/lyrics';
     if (player === currentPlayer) {
         return;
     }
@@ -786,6 +806,8 @@ Events.on(playbackManager, 'playerchange', function () {
 bindToPlayer(playbackManager.getCurrentPlayer());
 
 document.addEventListener('viewbeforeshow', function (e) {
+    isLyricPageActive = appRouter.currentRouteInfo.path.toLowerCase() === '/lyrics';
+    setLyricButtonActiveStatus();
     if (!e.detail.options.enableMediaControl) {
         if (isVisibilityAllowed) {
             isVisibilityAllowed = false;

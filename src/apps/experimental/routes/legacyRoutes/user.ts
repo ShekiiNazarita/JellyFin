@@ -14,6 +14,12 @@ export const LEGACY_USER_ROUTES: LegacyRoute[] = [
             view: 'list.html'
         }
     }, {
+        path: 'lyrics',
+        pageProps: {
+            controller: 'lyrics',
+            view: 'lyrics.html'
+        }
+    }, {
         path: 'mypreferencesmenu.html',
         pageProps: {
             controller: 'user/menu/index',
@@ -42,16 +48,6 @@ export const LEGACY_USER_ROUTES: LegacyRoute[] = [
         pageProps: {
             controller: 'user/subtitles/index',
             view: 'user/subtitles/index.html'
-        }
-    }, {
-        path: 'video',
-        pageProps: {
-            controller: 'playback/video/index',
-            view: 'playback/video/index.html',
-            type: 'video-osd',
-            isFullscreen: true,
-            isNowPlayingBarEnabled: false,
-            isThemeMediaSupported: true
         }
     }, {
         path: 'queue',

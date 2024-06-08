@@ -2,7 +2,6 @@ import 'jquery';
 import loading from '../../components/loading/loading';
 import globalize from '../../scripts/globalize';
 import dom from '../../scripts/dom';
-import libraryMenu from '../../scripts/libraryMenu';
 import Dashboard from '../../utils/dashboard';
 import alert from '../../components/alert';
 
@@ -19,7 +18,6 @@ function loadPage(page, config, systemInfo) {
     page.querySelector('#chkHardwareEncoding').checked = config.EnableHardwareEncoding;
     page.querySelector('#chkAllowHevcEncoding').checked = config.AllowHevcEncoding;
     page.querySelector('#chkAllowAv1Encoding').checked = config.AllowAv1Encoding;
-    page.querySelector('#chkAllowMjpegEncoding').checked = config.AllowMjpegEncoding;
     $('#selectVideoDecoder', page).val(config.HardwareAccelerationType);
     $('#selectThreadCount', page).val(config.EncodingThreadCount);
     page.querySelector('#chkEnableAudioVbr').checked = config.EnableAudioVbr;
@@ -128,7 +126,6 @@ function onSubmit() {
             config.EnableHardwareEncoding = form.querySelector('#chkHardwareEncoding').checked;
             config.AllowHevcEncoding = form.querySelector('#chkAllowHevcEncoding').checked;
             config.AllowAv1Encoding = form.querySelector('#chkAllowAv1Encoding').checked;
-            config.AllowMjpegEncoding = form.querySelector('#chkAllowMjpegEncoding').checked;
             ApiClient.updateNamedConfiguration('encoding', config).then(function () {
                 updateEncoder(form);
             }, function () {
@@ -167,22 +164,6 @@ function setDecodingCodecsVisible(context, value) {
     } else {
         context.querySelector('.decodingCodecsList').classList.add('hide');
     }
-}
-
-function getTabs() {
-    return [{
-        href: '#/dashboard/playback/transcoding',
-        name: globalize.translate('Transcoding')
-    }, {
-        href: '#/dashboard/playback/resume',
-        name: globalize.translate('ButtonResume')
-    }, {
-        href: '#/dashboard/playback/streaming',
-        name: globalize.translate('TabStreaming')
-    }, {
-        href: '#/dashboard/playback/trickplay',
-        name: globalize.translate('Trickplay')
-    }];
 }
 
 let systemInfo;
@@ -231,7 +212,7 @@ $(document).on('pageinit', '#encodingSettingsPage', function () {
             page.querySelector('.videoToolboxTonemappingOptions').classList.add('hide');
         }
 
-        if (systemInfo.OperatingSystem.toLowerCase() === 'linux' && (this.value == 'qsv' || this.value == 'vaapi')) {
+        if (this.value == 'qsv' || this.value == 'vaapi') {
             page.querySelector('.vppTonemappingOptions').classList.remove('hide');
         } else {
             page.querySelector('.vppTonemappingOptions').classList.add('hide');
@@ -294,7 +275,6 @@ $(document).on('pageinit', '#encodingSettingsPage', function () {
     $('.encodingSettingsForm').off('submit', onSubmit).on('submit', onSubmit);
 }).on('pageshow', '#encodingSettingsPage', function () {
     loading.show();
-    libraryMenu.setTabs('playback', 0, getTabs);
     const page = this;
     ApiClient.getNamedConfiguration('encoding').then(function (config) {
         ApiClient.getSystemInfo().then(function (fetchedSystemInfo) {
