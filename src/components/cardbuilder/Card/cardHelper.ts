@@ -221,10 +221,10 @@ function getParentTitle(
             title: isUsingLiveTvNaming(item.Type) ?
                 item.Name :
                 item.SeriesName
-                  || item.Series
-                  || item.Album
-                  || item.AlbumArtist
-                  || ''
+                || item.Series
+                || item.Album
+                || item.AlbumArtist
+                || ''
         };
     }
 }
@@ -574,8 +574,8 @@ function getProductionYear(item: ItemDto) {
 function getMediaTitle(cardOptions: CardOptions, item: ItemDto): TextLine {
     const name =
         cardOptions.showTitle === 'auto'
-        && !item.IsFolder
-        && item.MediaType === 'Photo' ?
+            && !item.IsFolder
+            && item.MediaType === 'Photo' ?
             '' :
             itemHelper.getDisplayName(item, {
                 includeParentInfo: cardOptions.includeParentInfoInTitle
@@ -671,9 +671,10 @@ export function getCardTextLines({
         && (cardOptions.showParentTitle || cardOptions.showParentTitleOrTitle)
         && !parentTitleUnderneath
     ) {
-        addTextLine(
-            getParentTitleOrTitle(isOuterFooter, item, setTitleAdded, showTitle)
-        );
+        const parentTitleOrTitle = getParentTitleOrTitle(isOuterFooter, item, setTitleAdded, showTitle);
+        if (parentTitleOrTitle.title || parentTitleOrTitle.titleAction) {
+            addTextLine(parentTitleOrTitle);
+        }
     }
 
     const showMediaTitle = shouldShowMediaTitle(
