@@ -3358,7 +3358,7 @@ class PlaybackManager {
             const nextItemPlayOptions = nextItem ? (nextItem.item.playOptions || getDefaultPlayOptions()) : getDefaultPlayOptions();
             const newPlayer = nextItem ? getPlayer(nextItem.item, nextItemPlayOptions) : null;
 
-            if (newPlayer !== player) {
+            if (!newPlayer) {
                 data.streamInfo = null;
                 destroyPlayer(player);
                 removeCurrentPlayer(player);
