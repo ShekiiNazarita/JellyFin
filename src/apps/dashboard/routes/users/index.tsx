@@ -1,5 +1,5 @@
 import type { UserDto } from '@jellyfin/sdk/lib/generated-client';
-import React, { FunctionComponent, useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import Dashboard from '../../../../utils/dashboard';
 import globalize from '../../../../scripts/globalize';
@@ -21,7 +21,7 @@ type MenuEntry = {
     icon?: string;
 };
 
-const UserProfiles: FunctionComponent = () => {
+const UserProfiles = () => {
     const [ users, setUsers ] = useState<UserDto[]>([]);
 
     const element = useRef<HTMLDivElement>(null);
@@ -159,6 +159,7 @@ const UserProfiles: FunctionComponent = () => {
         <Page
             id='userProfilesPage'
             className='mainAnimatedPage type-interior userProfilesPage fullWidthContent'
+            title={globalize.translate('HeaderUsers')}
         >
             <div ref={element} className='content-primary'>
                 <div className='verticalSection'>

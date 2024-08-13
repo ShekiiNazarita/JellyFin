@@ -1891,5 +1891,9 @@
     "PlaylistPublicDescription": "Permitir que esta lista de reproduccion sea vista por cualquier usuario que este logueado.",
     "HeaderLyricDownloads": "Descarga de letras",
     "HeaderVideoAdvanced": "Video Avanzado",
-    "SaveLyricsIntoMediaFolders": "Guardar letras en carpeta de media"
+    "SaveLyricsIntoMediaFolders": "Guardar letras en carpeta de media",
+    "Alternate": "Alternar",
+    "AlternateDVD": "DVD alternativo",
+    "HeaderNextItem": "Siguiente {0}",
+    "HeaderNextItemPlayingInValue": "Siguiente {0} Reproduciendo en {1}"
 }
