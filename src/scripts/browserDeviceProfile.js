@@ -980,6 +980,12 @@ export default function (options) {
         hevcProfiles = 'main|main 10';
     }
 
+    // Firefox does not support 10-bit HEVC, but is lying about it's capabilities
+    if (browser.firefox) {
+        maxHevcLevel = 123;
+        hevcProfiles = 'main';
+    }
+
     let maxAv1Level = 15; // level 5.3
     const av1Profiles = 'main'; // av1 main covers 4:2:0 8 & 10 bits
 
