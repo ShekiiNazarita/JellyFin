@@ -5,7 +5,13 @@ import browser from '../../../scripts/browser';
 import dom from '../../../scripts/dom';
 import inputManager from '../../../scripts/inputManager';
 import mouseManager from '../../../scripts/mouseManager';
-import datetime from '../../../scripts/datetime';
+import {
+    parseISO8601Date,
+    toLocaleString,
+    toLocaleTimeString,
+    getDisplayTime,
+    getDisplayRunningTime
+} from '../../../utils/datetime';
 import itemHelper from '../../../components/itemHelper';
 import mediaInfo from '../../../components/mediainfo/mediainfo';
 import focusManager from '../../../components/focusManager';
@@ -126,8 +132,8 @@ export default function (view) {
             setDisplayTime(endTimeText, displayItem.EndDate);
             startTimeText.classList.remove('hide');
             endTimeText.classList.remove('hide');
-            programStartDateMs = displayItem.StartDate ? datetime.parseISO8601Date(displayItem.StartDate).getTime() : 0;
-            programEndDateMs = displayItem.EndDate ? datetime.parseISO8601Date(displayItem.EndDate).getTime() : 0;
+            programStartDateMs = displayItem.StartDate ? parseISO8601Date(displayItem.StartDate).getTime() : 0;
+            programEndDateMs = displayItem.EndDate ? parseISO8601Date(displayItem.EndDate).getTime() : 0;
         } else {
             startTimeText.classList.add('hide');
             endTimeText.classList.add('hide');
@@ -171,21 +177,21 @@ export default function (view) {
 
     function getDisplayTimeWithoutAmPm(date, showSeconds) {
         if (showSeconds) {
-            return datetime.toLocaleTimeString(date, {
+            return toLocaleTimeString(date, {
                 hour: 'numeric',
                 minute: '2-digit',
                 second: '2-digit'
             }).toLowerCase().replace('am', '').replace('pm', '').trim();
         }
 
-        return datetime.getDisplayTime(date).toLowerCase().replace('am', '').replace('pm', '').trim();
+        return getDisplayTime(date).toLowerCase().replace('am', '').replace('pm', '').trim();
     }
 
     function setDisplayTime(elem, date) {
         let html;
 
         if (date) {
-            date = datetime.parseISO8601Date(date);
+            date = parseISO8601Date(date);
             html = getDisplayTimeWithoutAmPm(date);
         }
 
@@ -264,7 +270,7 @@ export default function (view) {
             title += ` (${datetime.toLocaleString(item.ProductionYear, { useGrouping: false })})`;
         } else if (item.PremiereDate) {
             try {
-                const year = datetime.toLocaleString(datetime.parseISO8601Date(item.PremiereDate).getFullYear(), { useGrouping: false });
+                const year = toLocaleString(parseISO8601Date(item.PremiereDate).getFullYear(), { useGrouping: false });
                 title += ` (${year})`;
             } catch (e) {
                 console.error(e);
@@ -689,7 +695,7 @@ export default function (view) {
 
             if (program?.EndDate) {
                 try {
-                    const endDate = datetime.parseISO8601Date(program.EndDate);
+                    const endDate = parseISO8601Date(program.EndDate);
 
                     if (new Date().getTime() >= endDate.getTime()) {
                         console.debug('program info needs to be refreshed');
@@ -913,7 +919,7 @@ export default function (view) {
             return;
         }
 
-        let html = datetime.getDisplayRunningTime(ticks);
+        let html = getDisplayRunningTime(ticks);
 
         if (divider) {
             html = '&nbsp;/&nbsp;' + html;
@@ -1451,7 +1457,7 @@ export default function (view) {
         chapterThumb.style.backgroundPositionX = offsetX + 'px';
         chapterThumb.style.backgroundPositionY = offsetY + 'px';
 
-        chapterThumbText.textContent = datetime.getDisplayRunningTime(positionTicks);
+        chapterThumbText.textContent = getDisplayRunningTime(positionTicks);
         chapterThumbName.textContent = chapter?.Name || '';
 
         // Set bubble innerHTML if container isn't part of DOM
@@ -1502,7 +1508,7 @@ export default function (view) {
             html += escapeHtml(chapter.Name);
             html += '</div>';
             html += '<h2 class="chapterThumbText">';
-            html += datetime.getDisplayRunningTime(positionTicks);
+            html += getDisplayRunningTime(positionTicks);
             html += '</h2>';
             html += '</div>';
             return html + '</div>';
@@ -1847,7 +1853,7 @@ export default function (view) {
             }
         }
 
-        return '<h1 class="sliderBubbleText">' + datetime.getDisplayRunningTime(ticks) + '</h1>';
+        return '<h1 class="sliderBubbleText">' + getDisplayRunningTime(ticks) + '</h1>';
     };
 
     nowPlayingPositionSlider.getMarkerInfo = function () {
