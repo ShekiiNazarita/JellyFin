@@ -1,7 +1,8 @@
+import { PersonKind } from '@jellyfin/sdk/lib/generated-client/models/person-kind';
 import { intervalToDuration } from 'date-fns';
 import DOMPurify from 'dompurify';
-import markdownIt from 'markdown-it';
 import escapeHtml from 'escape-html';
+import markdownIt from 'markdown-it';
 import isEqual from 'lodash-es/isEqual';
 
 import { appHost } from 'components/apphost';
@@ -532,10 +533,9 @@ function reloadFromItem(instance, page, params, item, user) {
 
     // Start rendering the artwork first
     renderImage(page, item, apiClient);
-    // Save some screen real estate in TV mode
-    if (!layoutManager.tv) {
-        renderLogo(page, item, apiClient);
-    }
+
+    renderLogo(page, item, apiClient);
+
     // Render the mobile header backdrop
     if (layoutManager.mobile) {
         renderHeaderBackdrop(page, item, apiClient);
@@ -822,8 +822,18 @@ function setInitialCollapsibleState(page, item, apiClient, context, user) {
         page.querySelector('#specialsCollapsible').classList.add('hide');
     }
 
-    renderCast(page, item);
-    renderGuestCast(page, item);
+    const cast = [];
+    const guestCast = [];
+    (item.People || []).forEach(p => {
+        if (p.Type === PersonKind.GuestStar) {
+            guestCast.push(p);
+        } else {
+            cast.push(p);
+        }
+    });
+
+    renderCast(page, item, cast);
+    renderGuestCast(page, item, guestCast);
 
     if (item.PartCount && item.PartCount > 1) {
         page.querySelector('#additionalPartsCollapsible').classList.remove('hide');
@@ -1055,6 +1065,7 @@ function renderDetails(page, item, apiClient, context) {
     renderOverview(page, item);
     renderMiscInfo(page, item);
     reloadUserDataButtons(page, item);
+    renderLyricsContainer(page, item, apiClient);
 
     // Don't allow redirection to other websites from the TV layout
     if (!layoutManager.tv && appHost.supports('externallinks')) {
@@ -1067,6 +1078,38 @@ function renderDetails(page, item, apiClient, context) {
 
 function enableScrollX() {
     return browser.mobile && window.screen.availWidth <= 1000;
+}
+
+function renderLyricsContainer(view, item, apiClient) {
+    const lyricContainer = view.querySelector('.lyricsContainer');
+    if (lyricContainer && item.HasLyrics) {
+        if (item.Type !== 'Audio') {
+            lyricContainer.classList.add('hide');
+            return;
+        }
+        //get lyrics
+        apiClient.ajax({
+            url: apiClient.getUrl('Audio/' + item.Id + '/Lyrics'),
+            type: 'GET',
+            dataType: 'json'
+        }).then((response) => {
+            if (!response.Lyrics) {
+                lyricContainer.classList.add('hide');
+                return;
+            }
+            lyricContainer.classList.remove('hide');
+            const itemsContainer = lyricContainer.querySelector('.itemsContainer');
+            if (itemsContainer) {
+                const html = response.Lyrics.reduce((htmlAccumulator, lyric) => {
+                    htmlAccumulator += escapeHtml(lyric.Text) + '<br/>';
+                    return htmlAccumulator;
+                }, '');
+                itemsContainer.innerHTML = html;
+            }
+        }).catch(() => {
+            lyricContainer.classList.add('hide');
+        });
+    }
 }
 
 function renderMoreFromSeason(view, item, apiClient) {
@@ -1119,7 +1162,7 @@ function renderMoreFromArtist(view, item, apiClient) {
     const section = view.querySelector('.moreFromArtistSection');
 
     if (section) {
-        if (item.Type !== 'MusicArtist' && (item.Type !== 'MusicAlbum' || !item.AlbumArtists || !item.AlbumArtists.length)) {
+        if (item.Type !== 'MusicArtist' && item.Type !== 'Audio' && (item.Type !== 'MusicAlbum' || !item.AlbumArtists || !item.AlbumArtists.length)) {
             section.classList.add('hide');
             return;
         }
@@ -1174,7 +1217,7 @@ function renderSimilarItems(page, item, context) {
     const similarCollapsible = page.querySelector('#similarCollapsible');
 
     if (similarCollapsible) {
-        if (item.Type != 'Movie' && item.Type != 'Trailer' && item.Type != 'Series' && item.Type != 'Program' && item.Type != 'Recording' && item.Type != 'MusicAlbum' && item.Type != 'MusicArtist' && item.Type != 'Playlist') {
+        if (item.Type != 'Movie' && item.Type != 'Trailer' && item.Type != 'Series' && item.Type != 'Program' && item.Type != 'Recording' && item.Type != 'MusicAlbum' && item.Type != 'MusicArtist' && item.Type != 'Playlist' && item.Type != 'Audio') {
             similarCollapsible.classList.add('hide');
             return;
         }
@@ -1414,11 +1457,17 @@ function renderChildren(page, item) {
         imageLoader.lazyChildren(childrenItemsContainer);
         if (item.Type == 'BoxSet') {
             const collectionItemTypes = [{
-                name: globalize.translate('HeaderVideos'),
-                mediaType: 'Video'
+                name: globalize.translate('Movies'),
+                type: 'Movie'
             }, {
                 name: globalize.translate('Series'),
                 type: 'Series'
+            }, {
+                name: globalize.translate('Episodes'),
+                type: 'Episode'
+            }, {
+                name: globalize.translate('HeaderVideos'),
+                mediaType: 'Video'
             }, {
                 name: globalize.translate('Albums'),
                 type: 'MusicAlbum'
@@ -1583,13 +1632,16 @@ function inferContext(item) {
 }
 
 function filterItemsByCollectionItemType(items, typeInfo) {
-    return items.filter(function (item) {
-        if (typeInfo.mediaType) {
-            return item.MediaType == typeInfo.mediaType;
+    const filteredItems = [];
+    const leftoverItems = [];
+    items.forEach(function(item) {
+        if ((typeInfo.mediaType && item.MediaType == typeInfo.mediaType) || (item.Type == typeInfo.type)) {
+            filteredItems.push(item);
+        } else {
+            leftoverItems.push(item);
         }
-
-        return item.Type == typeInfo.type;
     });
+    return [filteredItems, leftoverItems];
 }
 
 function canPlaySomeItemInCollection(items) {
@@ -1608,31 +1660,28 @@ function renderCollectionItems(page, parentItem, types, items) {
     page.querySelector('.collectionItems').classList.remove('hide');
     page.querySelector('.collectionItems').innerHTML = '';
 
-    for (const type of types) {
-        const typeItems = filterItemsByCollectionItemType(items, type);
-
-        if (typeItems.length) {
-            renderCollectionItemType(page, parentItem, type, typeItems);
-        }
-    }
-
-    const otherType = {
-        name: globalize.translate('HeaderOtherItems')
-    };
-    const otherTypeItems = items.filter(function (curr) {
-        return !types.filter(function (t) {
-            return filterItemsByCollectionItemType([curr], t).length > 0;
-        }).length;
-    });
-
-    if (otherTypeItems.length) {
-        renderCollectionItemType(page, parentItem, otherType, otherTypeItems);
-    }
-
     if (!items.length) {
         renderCollectionItemType(page, parentItem, {
             name: globalize.translate('Items')
         }, items);
+    } else {
+        let typeItems = [];
+        let otherTypeItems = items;
+
+        for (const type of types) {
+            [typeItems, otherTypeItems] = filterItemsByCollectionItemType(otherTypeItems, type);
+
+            if (typeItems.length) {
+                renderCollectionItemType(page, parentItem, type, typeItems);
+            }
+        }
+
+        if (otherTypeItems.length) {
+            const otherType = {
+                name: globalize.translate('HeaderOtherItems')
+            };
+            renderCollectionItemType(page, parentItem, otherType, otherTypeItems);
+        }
     }
 
     const containers = page.querySelectorAll('.collectionItemsContainer');
@@ -1770,11 +1819,7 @@ function renderSpecials(page, item, user) {
     });
 }
 
-function renderCast(page, item) {
-    const people = (item.People || []).filter(function (p) {
-        return p.Type === 'Actor';
-    });
-
+function renderCast(page, item, people) {
     if (!people.length) {
         page.querySelector('#castCollapsible').classList.add('hide');
         return;
@@ -1794,9 +1839,7 @@ function renderCast(page, item) {
     });
 }
 
-function renderGuestCast(page, item) {
-    const people = (item.People || []).filter(p => p.Type === 'GuestStar');
-
+function renderGuestCast(page, item, people) {
     if (!people.length) {
         page.querySelector('#guestCastCollapsible').classList.add('hide');
         return;

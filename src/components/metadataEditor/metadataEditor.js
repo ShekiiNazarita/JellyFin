@@ -6,7 +6,6 @@ import datetime from '../../scripts/datetime';
 import loading from '../loading/loading';
 import focusManager from '../focusManager';
 import globalize from '../../scripts/globalize';
-import shell from '../../scripts/shell';
 import '../../elements/emby-checkbox/emby-checkbox';
 import '../../elements/emby-input/emby-input';
 import '../../elements/emby-select/emby-select';
@@ -22,6 +21,7 @@ import ServerConnections from '../ServerConnections';
 import toast from '../toast/toast';
 import { appRouter } from '../router/appRouter';
 import template from './metadataEditor.template.html';
+import { SeriesStatus } from '@jellyfin/sdk/lib/generated-client';
 
 let currentContext;
 let metadataEditorInfo;
@@ -153,6 +153,7 @@ function onSubmit(e) {
         DateCreated: getDateValue(form, '#txtDateAdded', 'DateCreated'),
         EndDate: getDateValue(form, '#txtEndDate', 'EndDate'),
         ProductionYear: form.querySelector('#txtProductionYear').value,
+        Height: form.querySelector('#selectHeight').value,
         AspectRatio: form.querySelector('#txtOriginalAspectRatio').value,
         Video3DFormat: form.querySelector('#select3dFormat').value,
 
@@ -270,7 +271,7 @@ function showMoreMenu(context, button, user) {
             } else if (result.updated) {
                 reload(context, item.Id, item.ServerId);
             }
-        });
+        }).catch(() => { /* no-op */ });
     });
 }
 
@@ -298,19 +299,6 @@ function bindAll(elems, eventName, fn) {
 }
 
 function init(context) {
-    context.querySelector('.externalIds').addEventListener('click', function (e) {
-        const btnOpenExternalId = dom.parentWithClass(e.target, 'btnOpenExternalId');
-        if (btnOpenExternalId) {
-            const field = context.querySelector('#' + btnOpenExternalId.getAttribute('data-fieldid'));
-
-            const formatString = field.getAttribute('data-formatstring');
-
-            if (field.value) {
-                shell.openUrl(formatString.replace('{0}', field.value));
-            }
-        }
-    });
-
     if (!layoutManager.desktop) {
         context.querySelector('.btnBack').classList.remove('hide');
         context.querySelector('.btnClose').classList.add('hide');
@@ -440,7 +428,6 @@ function loadExternalIds(context, item, externalIds) {
         const idInfo = externalIds[i];
 
         const id = 'txt1' + idInfo.Key;
-        const formatString = idInfo.UrlFormatString || '';
 
         let fullName = idInfo.Name;
         if (idInfo.Type) {
@@ -455,14 +442,9 @@ function loadExternalIds(context, item, externalIds) {
         const value = escapeHtml(providerIds[idInfo.Key] || '');
 
         html += '<div class="flex-grow">';
-        html += '<input is="emby-input" class="txtExternalId" value="' + value + '" data-providerkey="' + idInfo.Key + '" data-formatstring="' + formatString + '" id="' + id + '" label="' + labelText + '"/>';
+        html += '<input is="emby-input" class="txtExternalId" value="' + value + '" data-providerkey="' + idInfo.Key + '" id="' + id + '" label="' + labelText + '"/>';
         html += '</div>';
-
-        if (formatString) {
-            html += '<button type="button" is="paper-icon-button-light" class="btnOpenExternalId align-self-flex-end" data-fieldid="' + id + '"><span class="material-icons open_in_browser" aria-hidden="true"></span></button>';
-        }
         html += '</div>';
-
         html += '</div>';
     }
 
@@ -589,8 +571,7 @@ function setFieldVisibilities(context, item) {
             || item.Type === 'Genre'
             || item.Type === 'Studio'
             || item.Type === 'MusicGenre'
-            || item.Type === 'TvChannel'
-            || item.Type === 'Book') {
+            || item.Type === 'TvChannel') {
         hideElement('#peopleCollapsible', context);
     } else {
         showElement('#peopleCollapsible', context);
@@ -650,6 +631,12 @@ function setFieldVisibilities(context, item) {
         hideElement('#fldPlaceOfBirth');
     }
 
+    if (item.MediaType === 'Video' && item.Type === 'TvChannel') {
+        showElement('#fldHeight');
+    } else {
+        hideElement('#fldHeight');
+    }
+
     if (item.MediaType === 'Video' && item.Type !== 'TvChannel') {
         showElement('#fldOriginalAspectRatio');
     } else {
@@ -704,6 +691,9 @@ function setFieldVisibilities(context, item) {
         html += '<option value="storyArc">' + globalize.translate('StoryArc') + '</option>';
         html += '<option value="production">' + globalize.translate('Production') + '</option>';
         html += '<option value="tv">TV</option>';
+        html += '<option value="alternate">' + globalize.translate('Alternate') + '</option>';
+        html += '<option value="regional">' + globalize.translate('Regional') + '</option>';
+        html += '<option value="altdvd">' + globalize.translate('AlternateDVD') + '</option>';
 
         context.querySelector('#selectDisplayOrder').innerHTML = html;
     } else {
@@ -828,6 +818,8 @@ function fillItemInfo(context, item, parentalRatingOptions) {
     const placeofBirth = item.ProductionLocations?.length ? item.ProductionLocations[0] : '';
     context.querySelector('#txtPlaceOfBirth').value = placeofBirth;
 
+    context.querySelector('#selectHeight').value = item.Height || '';
+
     context.querySelector('#txtOriginalAspectRatio').value = item.AspectRatio || '';
 
     context.querySelector('#selectLanguage').value = item.PreferredMetadataLanguage || '';
@@ -877,10 +869,10 @@ function populateRatings(allParentalRatings, select, currentValue) {
 
 function populateStatus(select) {
     let html = '';
-
-    html += "<option value=''></option>";
-    html += "<option value='Continuing'>" + globalize.translate('Continuing') + '</option>';
-    html += "<option value='Ended'>" + globalize.translate('Ended') + '</option>';
+    html += '<option value=""></option>';
+    html += `<option value="${SeriesStatus.Continuing}">${escapeHtml(globalize.translate('Continuing'))}</option>`;
+    html += `<option value="${SeriesStatus.Ended}">${escapeHtml(globalize.translate('Ended'))}</option>`;
+    html += `<option value="${SeriesStatus.Unreleased}">${escapeHtml(globalize.translate('Unreleased'))}</option>`;
     select.innerHTML = html;
 }
 
@@ -1066,7 +1058,10 @@ function show(itemId, serverId, resolve) {
         centerFocus(dlg.querySelector('.formDialogContent'), false, true);
     }
 
-    dialogHelper.open(dlg);
+    dialogHelper.open(dlg, {
+        preventCloseOnClick : true,
+        preventCloseOnRightClick : true
+    });
 
     dlg.addEventListener('close', function () {
         if (layoutManager.tv) {

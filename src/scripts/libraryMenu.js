@@ -30,6 +30,7 @@ import '../elements/emby-button/paper-icon-button-light';
 import 'material-design-icons-iconfont';
 import '../styles/scrollstyles.scss';
 import '../styles/flexstyles.scss';
+import { EventType } from 'types/eventType';
 
 function renderHeader() {
     let html = '';
@@ -398,7 +399,6 @@ function getUserViews(apiClient, userId) {
                 list.push(view);
 
                 if (view.CollectionType == 'livetv') {
-                    view.ImageTags = {};
                     view.icon = 'live_tv';
                     const guideView = Object.assign({}, view);
                     guideView.Name = globalize.translate('Guide');
@@ -581,7 +581,6 @@ function updateMenuForPageType(isDashboardPage, isLibraryPage) {
 
         if (isLibraryPage) {
             bodyClassList.add('libraryDocument');
-            bodyClassList.remove('dashboardDocument');
             bodyClassList.remove('hideMainDrawer');
 
             if (navDrawerInstance) {
@@ -589,7 +588,6 @@ function updateMenuForPageType(isDashboardPage, isLibraryPage) {
             }
         } else if (isDashboardPage) {
             bodyClassList.remove('libraryDocument');
-            bodyClassList.add('dashboardDocument');
             bodyClassList.remove('hideMainDrawer');
 
             if (navDrawerInstance) {
@@ -597,7 +595,6 @@ function updateMenuForPageType(isDashboardPage, isLibraryPage) {
             }
         } else {
             bodyClassList.remove('libraryDocument');
-            bodyClassList.remove('dashboardDocument');
             bodyClassList.add('hideMainDrawer');
 
             if (navDrawerInstance) {
@@ -703,6 +700,8 @@ const skinHeader = document.querySelector('.skinHeader');
 let requiresUserRefresh = true;
 
 function setTabs (type, selectedIndex, builder) {
+    Events.trigger(document, EventType.SET_TABS, type ? [ type, selectedIndex, builder()] : []);
+
     import('../components/maintabsmanager').then((mainTabsManager) => {
         if (type) {
             mainTabsManager.setTabs(viewManager.currentView(), selectedIndex, builder, function () {

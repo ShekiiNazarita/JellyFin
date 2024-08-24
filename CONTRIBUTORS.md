@@ -80,6 +80,19 @@
 - [Rasmus Krämer](https://github.com/rasmuslos)
 - [ntarelix](https://github.com/ntarelix)
 - [StableCrimson](https://github.com/StableCrimson)
+- [btopherjohnson](https://github.com/btopherjohnson)
+- [András Maróy](https://github.com/andrasmaroy)
+- [StableCrimson](https://github.com/StableCrimson)
+- [Chris-Codes-It](https://github.com/Chris-Codes-It)
+- [Vedant](https://github.com/viktory36)
+- [GeorgeH005](https://github.com/GeorgeH005)
+- [JPUC1143](https://github.com/Jpuc1143)
+- [David Angel](https://github.com/davidangel)
+- [Pithaya](https://github.com/Pithaya)
+- [Peter Santos](https://github.com/prsantos-com)
+- [Chaitanya Shahare](https://github.com/Chaitanya-Shahare)
+- [Venkat Karasani](https://github.com/venkat-karasani)
+- [Connor Smith](https://github.com/ConnorS1110)
 
 ## Emby Contributors
 

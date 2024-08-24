@@ -212,7 +212,7 @@ export default function (view, params, tabContent, options) {
                         name: globalize.translate('OptionRandom'),
                         id: 'Random'
                     }, {
-                        name: globalize.translate('OptionImdbRating'),
+                        name: globalize.translate('OptionCommunityRating'),
                         id: 'CommunityRating,SortName,ProductionYear'
                     }, {
                         name: globalize.translate('OptionCriticRating'),
@@ -321,4 +321,3 @@ export default function (view, params, tabContent, options) {
         itemsContainer = null;
     };
 }
-

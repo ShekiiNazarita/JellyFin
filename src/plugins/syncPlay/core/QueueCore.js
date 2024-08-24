@@ -123,7 +123,7 @@ class QueueCore {
 
         if (!itemIds.length) {
             if (this.lastPlayQueueUpdate && playQueueUpdate.LastUpdate.getTime() <= this.getLastUpdateTime()) {
-                return Promise.reject('Trying to apply old update');
+                return Promise.reject(new Error('Trying to apply old update'));
             }
 
             this.lastPlayQueueUpdate = playQueueUpdate;
@@ -227,14 +227,14 @@ class QueueCore {
 
         const serverId = apiClient.serverInfo().Id;
 
+        this.scheduleReadyRequestOnPlaybackStart(apiClient, 'startPlayback');
+
         const playerWrapper = this.manager.getPlayerWrapper();
         playerWrapper.localPlay({
             ids: this.getPlaylistAsItemIds(),
             startPositionTicks: startPositionTicks,
             startIndex: this.getCurrentPlaylistIndex(),
             serverId: serverId
-        }).then(() => {
-            this.scheduleReadyRequestOnPlaybackStart(apiClient, 'startPlayback');
         }).catch((error) => {
             console.error(error);
             toast(globalize.translate('MessageSyncPlayErrorMedia'));

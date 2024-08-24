@@ -28,6 +28,7 @@ import LibraryMenu from '../../../scripts/libraryMenu';
 import { setBackdropTransparency, TRANSPARENCY_LEVEL } from '../../../components/backdrop/backdrop';
 import { pluginManager } from '../../../components/pluginManager';
 import { PluginType } from '../../../types/plugin.ts';
+import { EventType } from 'types/eventType';
 
 const TICKS_PER_MINUTE = 600000000;
 const TICKS_PER_SECOND = 10000000;
@@ -146,6 +147,26 @@ export default function (view) {
             btnUserRating.classList.add('hide');
             btnUserRating.setItem(null);
         }
+
+        // Update trickplay data
+        trickplayResolution = null;
+
+        const mediaSourceId = currentPlayer.streamInfo.mediaSource.Id;
+        const trickplayResolutions = item.Trickplay?.[mediaSourceId];
+        if (trickplayResolutions) {
+            // Prefer highest resolution <= 20% of total screen resolution width
+            let bestWidth;
+            const maxWidth = window.screen.width * window.devicePixelRatio * 0.2;
+            for (const [, info] of Object.entries(trickplayResolutions)) {
+                if (!bestWidth
+                        || (info.Width < bestWidth && bestWidth > maxWidth) // Objects not guaranteed to be sorted in any order, first width might be > maxWidth.
+                        || (info.Width > bestWidth && info.Width <= maxWidth)) {
+                    bestWidth = info.Width;
+                }
+            }
+
+            if (bestWidth) trickplayResolution = trickplayResolutions[bestWidth];
+        }
     }
 
     function getDisplayTimeWithoutAmPm(date, showSeconds) {
@@ -260,12 +281,14 @@ export default function (view) {
     let mouseIsDown = false;
 
     function showOsd(focusElement) {
+        Events.trigger(document, EventType.SHOW_VIDEO_OSD, [ true ]);
         slideDownToShow(headerElement);
         showMainOsdControls(focusElement);
         resetIdle();
     }
 
     function hideOsd() {
+        Events.trigger(document, EventType.SHOW_VIDEO_OSD, [ false ]);
         slideUpToHide(headerElement);
         hideMainOsdControls();
         mouseManager.hideCursor();
@@ -300,18 +323,14 @@ export default function (view) {
     }
 
     function clearHideAnimationEventListeners(elem) {
-        dom.removeEventListener(elem, transitionEndEventName, onHideAnimationComplete, {
-            once: true
-        });
+        elem.removeEventListener(transitionEndEventName, onHideAnimationComplete);
     }
 
     function onHideAnimationComplete(e) {
         const elem = e.target;
         if (elem != osdBottomElement) return;
         elem.classList.add('hide');
-        dom.removeEventListener(elem, transitionEndEventName, onHideAnimationComplete, {
-            once: true
-        });
+        elem.removeEventListener(transitionEndEventName, onHideAnimationComplete);
     }
 
     const _focus = debounce((focusElement) => focusManager.focus(focusElement), 50);
@@ -341,9 +360,7 @@ export default function (view) {
             clearHideAnimationEventListeners(elem);
             elem.classList.add('videoOsdBottom-hidden');
 
-            dom.addEventListener(elem, transitionEndEventName, onHideAnimationComplete, {
-                once: true
-            });
+            elem.addEventListener(transitionEndEventName, onHideAnimationComplete);
             currentVisibleMenu = null;
             toggleSubtitleSync('hide');
 
@@ -479,10 +496,10 @@ export default function (view) {
         icon.classList.remove('fullscreen_exit', 'fullscreen');
 
         if (playbackManager.isFullscreen(currentPlayer)) {
-            button.setAttribute('title', globalize.translate('ExitFullscreen') + ' (f)');
+            button.setAttribute('title', globalize.translate('ExitFullscreen') + ' (F)');
             icon.classList.add('fullscreen_exit');
         } else {
-            button.setAttribute('title', globalize.translate('Fullscreen') + ' (f)');
+            button.setAttribute('title', globalize.translate('Fullscreen') + ' (F)');
             icon.classList.add('fullscreen');
         }
     }
@@ -704,7 +721,7 @@ export default function (view) {
         }
 
         btnPlayPauseIcon.classList.add(icon);
-        dom.setElementTitle(btnPlayPause, title + ' (k)', title);
+        dom.setElementTitle(btnPlayPause, title + ' (K)', title);
     }
 
     function updatePlayerStateInternal(event, player, state) {
@@ -853,10 +870,10 @@ export default function (view) {
         buttonMuteIcon.classList.remove('volume_off', 'volume_up');
 
         if (isMuted) {
-            buttonMute.setAttribute('title', globalize.translate('Unmute') + ' (m)');
+            buttonMute.setAttribute('title', globalize.translate('Unmute') + ' (M)');
             buttonMuteIcon.classList.add('volume_off');
         } else {
-            buttonMute.setAttribute('title', globalize.translate('Mute') + ' (m)');
+            buttonMute.setAttribute('title', globalize.translate('Mute') + ' (M)');
             buttonMuteIcon.classList.add('volume_up');
         }
 
@@ -1228,6 +1245,7 @@ export default function (view) {
                 }
                 break;
             case 'k':
+            case 'K':
                 playbackManager.playPause(currentPlayer);
                 showOsd(btnPlayPause);
                 break;
@@ -1240,23 +1258,27 @@ export default function (view) {
                 playbackManager.volumeDown(currentPlayer);
                 break;
             case 'l':
+            case 'L':
             case 'ArrowRight':
             case 'Right':
                 playbackManager.fastForward(currentPlayer);
                 showOsd(btnFastForward);
                 break;
             case 'j':
+            case 'J':
             case 'ArrowLeft':
             case 'Left':
                 playbackManager.rewind(currentPlayer);
                 showOsd(btnRewind);
                 break;
             case 'f':
+            case 'F':
                 if (!e.ctrlKey && !e.metaKey) {
                     playbackManager.toggleFullscreen(currentPlayer);
                 }
                 break;
             case 'm':
+            case 'M':
                 playbackManager.toggleMute(currentPlayer);
                 break;
             case 'p':
@@ -1331,6 +1353,7 @@ export default function (view) {
     }
 
     function onWheel(e) {
+        if (getOpenedDialog()) return;
         if (e.deltaY < 0) {
             playbackManager.volumeUp(currentPlayer);
         }
@@ -1354,6 +1377,87 @@ export default function (view) {
         // mousedown -> dragstart -> dragend !!! no mouseup :(
         mouseIsDown = false;
         resetIdle();
+    }
+
+    function updateTrickplayBubbleHtml(apiClient, trickplayInfo, item, mediaSourceId, bubble, positionTicks) {
+        let doFullUpdate = false;
+        let chapterThumbContainer = bubble.querySelector('.chapterThumbContainer');
+        let chapterThumb;
+        let chapterThumbText;
+        let chapterThumbName;
+
+        // Create bubble elements if they don't already exist
+        if (chapterThumbContainer) {
+            chapterThumb = chapterThumbContainer.querySelector('.chapterThumbWrapper');
+            chapterThumbText = chapterThumbContainer.querySelector('h2.chapterThumbText');
+            chapterThumbName = chapterThumbContainer.querySelector('div.chapterThumbText');
+        } else {
+            doFullUpdate = true;
+
+            chapterThumbContainer = document.createElement('div');
+            chapterThumbContainer.classList.add('chapterThumbContainer');
+            chapterThumbContainer.style.overflow = 'hidden';
+
+            chapterThumb = document.createElement('div');
+            chapterThumb.classList.add('chapterThumbWrapper');
+            chapterThumb.style.overflow = 'hidden';
+            chapterThumb.style.width = trickplayInfo.Width + 'px';
+            chapterThumb.style.height = trickplayInfo.Height + 'px';
+            chapterThumbContainer.appendChild(chapterThumb);
+
+            const chapterThumbTextContainer = document.createElement('div');
+            chapterThumbTextContainer.classList.add('chapterThumbTextContainer');
+            chapterThumbContainer.appendChild(chapterThumbTextContainer);
+
+            chapterThumbName = document.createElement('div');
+            chapterThumbName.classList.add('chapterThumbText', 'chapterThumbText-dim');
+            chapterThumbTextContainer.appendChild(chapterThumbName);
+
+            chapterThumbText = document.createElement('h2');
+            chapterThumbText.classList.add('chapterThumbText');
+            chapterThumbTextContainer.appendChild(chapterThumbText);
+        }
+
+        let chapter;
+        for (const currentChapter of item.Chapters || []) {
+            if (positionTicks < currentChapter.StartPositionTicks) {
+                break;
+            }
+
+            chapter = currentChapter;
+        }
+
+        // Update trickplay values
+        const currentTimeMs = positionTicks / 10_000;
+        const currentTile = Math.floor(currentTimeMs / trickplayInfo.Interval);
+
+        const tileSize = trickplayInfo.TileWidth * trickplayInfo.TileHeight;
+        const tileOffset = currentTile % tileSize;
+        const index = Math.floor(currentTile / tileSize);
+
+        const tileOffsetX = tileOffset % trickplayInfo.TileWidth;
+        const tileOffsetY = Math.floor(tileOffset / trickplayInfo.TileWidth);
+        const offsetX = -(tileOffsetX * trickplayInfo.Width);
+        const offsetY = -(tileOffsetY * trickplayInfo.Height);
+
+        const imgSrc = apiClient.getUrl('Videos/' + item.Id + '/Trickplay/' + trickplayInfo.Width + '/' + index + '.jpg', {
+            api_key: apiClient.accessToken(),
+            MediaSourceId: mediaSourceId
+        });
+
+        chapterThumb.style.backgroundImage = `url('${imgSrc}')`;
+        chapterThumb.style.backgroundPositionX = offsetX + 'px';
+        chapterThumb.style.backgroundPositionY = offsetY + 'px';
+
+        chapterThumbText.textContent = datetime.getDisplayRunningTime(positionTicks);
+        chapterThumbName.textContent = chapter?.Name || '';
+
+        // Set bubble innerHTML if container isn't part of DOM
+        if (doFullUpdate) {
+            bubble.innerHTML = chapterThumbContainer.outerHTML;
+        }
+
+        return true;
     }
 
     function getImgUrl(item, chapter, index, maxWidth, apiClient) {
@@ -1455,6 +1559,7 @@ export default function (view) {
     let programEndDateMs = 0;
     let playbackStartTimeTicks = 0;
     let subtitleSyncOverlay;
+    let trickplayResolution = null;
     const nowPlayingVolumeSlider = view.querySelector('.osdVolumeSlider');
     const nowPlayingVolumeSliderContainer = view.querySelector('.osdVolumeSliderContainer');
     const nowPlayingPositionSlider = view.querySelector('.osdPositionSlider');
@@ -1681,6 +1786,34 @@ export default function (view) {
         }
     });
 
+    nowPlayingPositionSlider.addEventListener('keydown', function (e) {
+        if (e.defaultPrevented) return;
+
+        const key = keyboardnavigation.getKeyName(e);
+        if (key === 'Enter') {
+            playbackManager.playPause(currentPlayer);
+        }
+    });
+
+    nowPlayingPositionSlider.updateBubbleHtml = function(bubble, value) {
+        showOsd();
+
+        const item = currentItem;
+        const ticks = currentRuntimeTicks * value / 100;
+
+        if (trickplayResolution && item?.Trickplay) {
+            return updateTrickplayBubbleHtml(
+                ServerConnections.getApiClient(item.ServerId),
+                trickplayResolution,
+                item,
+                currentPlayer.streamInfo.mediaSource.Id,
+                bubble,
+                ticks);
+        }
+
+        return false;
+    };
+
     nowPlayingPositionSlider.getBubbleHtml = function (value) {
         showOsd();
         if (enableProgressByTimeOfDay) {
@@ -1716,22 +1849,11 @@ export default function (view) {
     };
 
     nowPlayingPositionSlider.getMarkerInfo = function () {
-        const markers = [];
-
-        const item = currentItem;
-
         // use markers based on chapters
-        if (item?.Chapters?.length) {
-            item.Chapters.forEach(currentChapter => {
-                markers.push({
-                    className: 'chapterMarker',
-                    name: currentChapter.Name,
-                    progress: currentChapter.StartPositionTicks / item.RunTimeTicks
-                });
-            });
-        }
-
-        return markers;
+        return currentItem?.Chapters?.map(currentChapter => ({
+            name: currentChapter.Name,
+            progress: currentChapter.StartPositionTicks / currentItem.RunTimeTicks
+        })) || [];
     };
 
     view.querySelector('.btnPreviousTrack').addEventListener('click', function () {

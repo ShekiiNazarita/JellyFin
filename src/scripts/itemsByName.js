@@ -125,7 +125,7 @@ function renderSection(item, element, type) {
                 ArtistIds: '',
                 AlbumArtistIds: '',
                 Limit: 10,
-                SortOrder: 'Descending,Desending,Ascending',
+                SortOrder: 'Descending,Descending,Ascending',
                 SortBy: 'PremiereDate,ProductionYear,SortName'
             }, {
                 shape: 'overflowPortrait',
@@ -195,7 +195,7 @@ function renderSection(item, element, type) {
                 PersonTypes: '',
                 ArtistIds: '',
                 AlbumArtistIds: '',
-                SortOrder: 'Descending,Desending,Ascending',
+                SortOrder: 'Descending,Descending,Ascending',
                 SortBy: 'PremiereDate,ProductionYear,Sortname'
             }, {
                 shape: 'overflowSquare',
@@ -343,7 +343,7 @@ function getQuery(options, item) {
         SortOrder: 'Ascending',
         IncludeItemTypes: '',
         Recursive: true,
-        Fields: 'AudioInfo,ParentId,PrimaryImageAspectRatio',
+        Fields: 'ParentId,PrimaryImageAspectRatio',
         Limit: 100,
         StartIndex: 0,
         CollapseBoxSetItems: false
