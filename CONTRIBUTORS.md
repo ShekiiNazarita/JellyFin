@@ -79,10 +79,8 @@
 - [Kevin Tan (Valius)](https://github.com/valius)
 - [Rasmus Krämer](https://github.com/rasmuslos)
 - [ntarelix](https://github.com/ntarelix)
-- [StableCrimson](https://github.com/StableCrimson)
 - [btopherjohnson](https://github.com/btopherjohnson)
 - [András Maróy](https://github.com/andrasmaroy)
-- [StableCrimson](https://github.com/StableCrimson)
 - [Chris-Codes-It](https://github.com/Chris-Codes-It)
 - [Vedant](https://github.com/viktory36)
 - [GeorgeH005](https://github.com/GeorgeH005)
@@ -94,6 +92,7 @@
 - [Venkat Karasani](https://github.com/venkat-karasani)
 - [Connor Smith](https://github.com/ConnorS1110)
 - [iFraan](https://github.com/iFraan)
+- [StableCrimson](https://github.com/StableCrimson)
 
 ## Emby Contributors
 
