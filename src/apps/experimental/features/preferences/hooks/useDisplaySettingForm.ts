@@ -2,8 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import toast from 'components/toast/toast';
-import globalize from 'scripts/globalize';
-import { DisplaySettingsValues } from '../types';
+import globalize from 'lib/globalize';
+
+import type { DisplaySettingsValues } from '../types/displaySettingsValues';
 import { useDisplaySettings } from './useDisplaySettings';
 
 type UpdateField = {
