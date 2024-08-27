@@ -92,6 +92,7 @@
 - [Venkat Karasani](https://github.com/venkat-karasani)
 - [Connor Smith](https://github.com/ConnorS1110)
 - [iFraan](https://github.com/iFraan)
+- [StableCrimson](https://github.com/StableCrimson)
 
 ## Emby Contributors
 
