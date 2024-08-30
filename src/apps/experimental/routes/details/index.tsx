@@ -18,6 +18,7 @@ import CollectionItems from 'apps/experimental/features/details/components/secti
 import NextUp from 'apps/experimental/features/details/components/section/NextUp';
 import PogramGuide from 'apps/experimental/features/details/components/section/PogramGuide';
 import ChildrenSection from 'apps/experimental/features/details/components/section/ChildrenSection';
+import AdditionalParts from 'apps/experimental/features/details/components/section/AdditionalParts';
 
 import { ItemKind } from 'types/base/models/item-kind';
 import './details.scss';
@@ -100,6 +101,15 @@ const Details: FC = () => {
                                     )}
 
                                     <ChildrenSection item={item} />
+
+                                    {item.Id
+                                        && item.PartCount != null
+                                        && item.PartCount > 1 && (
+                                        <AdditionalParts
+                                            itemId={item.Id}
+                                            userId={user?.Id}
+                                        />
+                                    )}
                                 </div>
                             </div>
                         </div>
