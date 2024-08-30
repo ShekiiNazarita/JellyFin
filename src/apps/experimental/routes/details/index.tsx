@@ -20,6 +20,7 @@ import PogramGuide from 'apps/experimental/features/details/components/section/P
 import ChildrenSection from 'apps/experimental/features/details/components/section/ChildrenSection';
 import AdditionalParts from 'apps/experimental/features/details/components/section/AdditionalParts';
 import MoreFromSeason from 'apps/experimental/features/details/components/section/MoreFromSeason';
+import MoreFromArtist from 'apps/experimental/features/details/components/section/MoreFromArtist';
 
 import { ItemKind } from 'types/base/models/item-kind';
 import './details.scss';
@@ -121,6 +122,13 @@ const Details: FC = () => {
                                             seasonName={item.SeasonName}
                                             userId={user?.Id}
                                         />
+                                    )}
+
+                                    {(item.Type === ItemKind.MusicArtist
+                                        || (item.Type === ItemKind.MusicAlbum
+                                            && item?.AlbumArtists
+                                            && item.AlbumArtists.length > 0)) && (
+                                        <MoreFromArtist item={item} />
                                     )}
                                 </div>
                             </div>

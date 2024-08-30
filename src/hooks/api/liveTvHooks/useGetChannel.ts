@@ -26,15 +26,15 @@ const getChannel = async (
 export const getChannelQuery = (
     apiContext: JellyfinApiContext,
     params: LiveTvApiGetChannelRequest
-) => queryOptions({
-    queryKey: ['Channel', params.channelId],
-    queryFn: ({ signal }) => getChannel(apiContext, params, { signal }),
-    enabled: !!apiContext.api && !!apiContext.user?.Id && !!params.channelId
-});
+) =>
+    queryOptions({
+        queryKey: ['Channel', params.channelId],
+        queryFn: ({ signal }) => getChannel(apiContext, params, { signal }),
+        enabled:
+            !!apiContext.api && !!apiContext.user?.Id && !!params.channelId
+    });
 
-export const useGetChannel = (
-    params: LiveTvApiGetChannelRequest
-) => {
+export const useGetChannel = (params: LiveTvApiGetChannelRequest) => {
     const apiContext = useApi();
     return useQuery(getChannelQuery(apiContext, params));
 };
