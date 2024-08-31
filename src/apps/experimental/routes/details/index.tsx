@@ -24,6 +24,7 @@ import MoreFromArtist from 'apps/experimental/features/details/components/sectio
 import CastAndCrewSection from 'apps/experimental/features/details/components/section/CastAndCrewSection';
 import SeriesSchedule from 'apps/experimental/features/details/components/section/SeriesSchedule';
 import SpecialFeatures from 'apps/experimental/features/details/components/section/SpecialFeatures';
+import MusicVideos from 'apps/experimental/features/details/components/section/MusicVideos';
 
 import { ItemKind } from 'types/base/models/item-kind';
 import './details.scss';
@@ -159,6 +160,17 @@ const Details: FC = () => {
                                         && item.SpecialFeatureCount != null
                                         && item.SpecialFeatureCount > 0 && (
                                         <SpecialFeatures
+                                            itemId={item.Id}
+                                            userId={user?.Id}
+                                        />
+                                    )}
+
+                                    {item.Id
+                                        && (item.Type === ItemKind.MusicAlbum
+                                            || item.Type
+                                                === ItemKind.MusicArtist) && (
+                                        <MusicVideos
+                                            itemType={item.Type}
                                             itemId={item.Id}
                                             userId={user?.Id}
                                         />
