@@ -40,5 +40,6 @@ export interface ListOptions extends TextLineOpts {
     enableRatingButton?: boolean;
     smallIcon?: boolean;
     sortBy?: ItemSortBy;
-    queryKey?: string[]
+    queryKey?: string[];
+    runtime?: boolean
 }

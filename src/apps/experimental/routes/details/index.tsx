@@ -13,6 +13,9 @@ import DetailsBanner from 'apps/experimental/features/details/components/DetailB
 import DetailPrimaryContainer from 'apps/experimental/features/details/components/DetailPrimaryContainer';
 import DetailSecondaryContainer from 'apps/experimental/features/details/components/DetailSecondaryContainer';
 
+import SeriesTimerSchedule from 'apps/experimental/features/details/components/section/SeriesTimerSchedule';
+
+import { ItemKind } from 'types/base/models/item-kind';
 import './details.scss';
 
 const Details: FC = () => {
@@ -66,6 +69,15 @@ const Details: FC = () => {
                                         context={context}
                                         user={user}
                                     />
+
+                                    {item.Type === ItemKind.SeriesTimer
+                                        && user?.Policy
+                                            ?.EnableLiveTvManagement && (
+                                        <SeriesTimerSchedule
+                                            seriesTimerId={item.Id}
+                                        />
+                                    )}
+
                                 </div>
                             </div>
                         </div>
