@@ -23,6 +23,7 @@ import MoreFromSeason from 'apps/experimental/features/details/components/sectio
 import MoreFromArtist from 'apps/experimental/features/details/components/section/MoreFromArtist';
 import CastAndCrewSection from 'apps/experimental/features/details/components/section/CastAndCrewSection';
 import SeriesSchedule from 'apps/experimental/features/details/components/section/SeriesSchedule';
+import SpecialFeatures from 'apps/experimental/features/details/components/section/SpecialFeatures';
 
 import { ItemKind } from 'types/base/models/item-kind';
 import './details.scss';
@@ -150,6 +151,15 @@ const Details: FC = () => {
                                             ?.EnableLiveTvManagement && (
                                         <SeriesSchedule
                                             librarySeriesId={item.Id}
+                                            userId={user?.Id}
+                                        />
+                                    )}
+
+                                    {item.Id
+                                        && item.SpecialFeatureCount != null
+                                        && item.SpecialFeatureCount > 0 && (
+                                        <SpecialFeatures
+                                            itemId={item.Id}
                                             userId={user?.Id}
                                         />
                                     )}
