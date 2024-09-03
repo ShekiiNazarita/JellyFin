@@ -13,26 +13,21 @@ const getDownload = async (
     if (!api) throw new Error('No API instance available');
     if (!user?.Id) throw new Error('No User ID provided');
 
-    const response = await getLibraryApi(api).getDownload(
-        params,
-        options
-    );
+    const response = await getLibraryApi(api).getDownload(params, options);
     return response.data;
 };
 
 export const getDownloadQuery = (
     apiContext: JellyfinApiContext,
     params: LibraryApiGetDownloadRequest
-) => queryOptions({
-    queryKey: ['Download', params.itemId],
-    queryFn: ({ signal }) =>
-        getDownload(apiContext, params, { signal }),
-    enabled: !!apiContext.api && !!apiContext.user?.Id && !!params.itemId
-});
+) =>
+    queryOptions({
+        queryKey: ['Download', params.itemId],
+        queryFn: ({ signal }) => getDownload(apiContext, params, { signal }),
+        enabled: !!apiContext.api && !!apiContext.user?.Id && !!params.itemId
+    });
 
-export const useGetDownload = (
-    params: LibraryApiGetDownloadRequest
-) => {
+export const useGetDownload = (params: LibraryApiGetDownloadRequest) => {
     const apiContext = useApi();
     return useQuery(getDownloadQuery(apiContext, params));
 };

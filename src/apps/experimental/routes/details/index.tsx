@@ -26,6 +26,7 @@ import SeriesSchedule from 'apps/experimental/features/details/components/sectio
 import SpecialFeatures from 'apps/experimental/features/details/components/section/SpecialFeatures';
 import MusicVideos from 'apps/experimental/features/details/components/section/MusicVideos';
 import Scenes from 'apps/experimental/features/details/components/section/Scenes';
+import SimilarItems from 'apps/experimental/features/details/components/section/SimilarItems';
 
 import { ItemKind } from 'types/base/models/item-kind';
 import './details.scss';
@@ -184,6 +185,24 @@ const Details: FC = () => {
                                             chapters={item.Chapters}
                                             item={item}
                                             reloadItems={refetch}
+                                        />
+                                    )}
+
+                                    {(item.Type === ItemKind.Movie
+                                        || item.Type === ItemKind.Trailer
+                                        || item.Type === ItemKind.Series
+                                        || item.Type === ItemKind.Program
+                                        || item.Type === ItemKind.Recording
+                                        || item.Type === ItemKind.MusicAlbum
+                                        || item.Type === ItemKind.MusicArtist
+                                        || item.Type === ItemKind.Playlist)
+                                        && item.Id && (
+                                        <SimilarItems
+                                            itemId={item.Id}
+                                            itemType={item.Type}
+                                            userId={user?.Id}
+                                            albumArtists={item.AlbumArtists}
+                                            context={context}
                                         />
                                     )}
                                 </div>
