@@ -22,6 +22,7 @@ import AdditionalParts from 'apps/experimental/features/details/components/secti
 import MoreFromSeason from 'apps/experimental/features/details/components/section/MoreFromSeason';
 import MoreFromArtist from 'apps/experimental/features/details/components/section/MoreFromArtist';
 import CastAndCrewSection from 'apps/experimental/features/details/components/section/CastAndCrewSection';
+import SeriesSchedule from 'apps/experimental/features/details/components/section/SeriesSchedule';
 
 import { ItemKind } from 'types/base/models/item-kind';
 import './details.scss';
@@ -140,6 +141,16 @@ const Details: FC = () => {
                                             itemMediaType={item.MediaType}
                                             serverId={item.SeasonId}
                                             reloadItems={refetch}
+                                        />
+                                    )}
+
+                                    {item.Id
+                                        && item.Type == ItemKind.Series
+                                        && user?.Policy
+                                            ?.EnableLiveTvManagement && (
+                                        <SeriesSchedule
+                                            librarySeriesId={item.Id}
+                                            userId={user?.Id}
                                         />
                                     )}
                                 </div>
