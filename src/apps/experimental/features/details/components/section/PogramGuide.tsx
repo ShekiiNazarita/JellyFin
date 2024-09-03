@@ -28,6 +28,7 @@ const PogramGuide: FC<PogramGuideProps> = ({ item }) => {
             key={groupsProgram.dateText}
             isListEnabled
             sectionHeaderProps={{
+                className: 'no-padding',
                 title: groupsProgram.dateText
             }}
             itemsContainerProps={{

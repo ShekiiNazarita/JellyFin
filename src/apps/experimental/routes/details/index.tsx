@@ -17,6 +17,7 @@ import SeriesTimerSchedule from 'apps/experimental/features/details/components/s
 import CollectionItems from 'apps/experimental/features/details/components/section/CollectionItems';
 import NextUp from 'apps/experimental/features/details/components/section/NextUp';
 import PogramGuide from 'apps/experimental/features/details/components/section/PogramGuide';
+import ChildrenSection from 'apps/experimental/features/details/components/section/ChildrenSection';
 
 import { ItemKind } from 'types/base/models/item-kind';
 import './details.scss';
@@ -97,6 +98,8 @@ const Details: FC = () => {
                                     {item.Type === ItemKind.TvChannel && (
                                         <PogramGuide item={item} />
                                     )}
+
+                                    <ChildrenSection item={item} />
                                 </div>
                             </div>
                         </div>
