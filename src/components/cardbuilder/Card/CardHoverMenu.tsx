@@ -26,7 +26,8 @@ const CardHoverMenu: FC<CardHoverMenuProps> = ({
     cardOptions
 }) => {
     const url = appRouter.getRouteUrl(item, {
-        parentId: cardOptions.parentId
+        parentId: cardOptions.parentId,
+        serverId: cardOptions.serverId
     });
     const btnCssClass =
         'paper-icon-button-light cardOverlayButton cardOverlayButton-hover itemAction';

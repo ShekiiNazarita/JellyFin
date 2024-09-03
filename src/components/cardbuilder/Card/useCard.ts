@@ -55,7 +55,7 @@ function useCard({ item, cardOptions }: UseCardProps) {
     const dataAttributes = getDataAttributes(
         {
             action,
-            itemServerId: item.ServerId ?? cardOptions.serverId,
+            itemServerId: item.ServerId || cardOptions.serverId,
             context: cardOptions.context,
             parentId: cardOptions.parentId,
             collectionId: cardOptions.collectionId,

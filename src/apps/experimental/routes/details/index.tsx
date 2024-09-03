@@ -21,6 +21,7 @@ import ChildrenSection from 'apps/experimental/features/details/components/secti
 import AdditionalParts from 'apps/experimental/features/details/components/section/AdditionalParts';
 import MoreFromSeason from 'apps/experimental/features/details/components/section/MoreFromSeason';
 import MoreFromArtist from 'apps/experimental/features/details/components/section/MoreFromArtist';
+import CastAndCrewSection from 'apps/experimental/features/details/components/section/CastAndCrewSection';
 
 import { ItemKind } from 'types/base/models/item-kind';
 import './details.scss';
@@ -40,7 +41,8 @@ const Details: FC = () => {
         isLoading,
         isFetching,
         isSuccess,
-        data: item
+        data: item,
+        refetch
     } = useGetDetailsItem({
         urlParams: {
             id,
@@ -129,6 +131,16 @@ const Details: FC = () => {
                                             && item?.AlbumArtists
                                             && item.AlbumArtists.length > 0)) && (
                                         <MoreFromArtist item={item} />
+                                    )}
+
+                                    {item.People && item.People.length > 0 && (
+                                        <CastAndCrewSection
+                                            people={item.People}
+                                            itemType={item.Type}
+                                            itemMediaType={item.MediaType}
+                                            serverId={item.SeasonId}
+                                            reloadItems={refetch}
+                                        />
                                     )}
                                 </div>
                             </div>

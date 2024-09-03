@@ -62,7 +62,7 @@ const CardImageContainer: FC<CardImageContainerProps> = ({
                 </Box>
             )}
 
-            <Media item={item} imgUrl={imgUrl} blurhash={blurhash} imageType={cardOptions.imageType} />
+            <Media item={item} imgUrl={imgUrl} blurhash={blurhash} imageType={cardOptions.imageType} defaultCardImageIcon={cardOptions.defaultCardImageIcon} />
 
             {overlayText && (
                 <CardInnerFooter

@@ -1,7 +1,9 @@
+import { PersonKind } from '@jellyfin/sdk/lib/generated-client';
 import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
 
 export const ItemKind = {
     ...BaseItemKind,
+    ...PersonKind,
     Timer: 'Timer',
     SeriesTimer: 'SeriesTimer',
     AudioPodcast: 'AudioPodcast'

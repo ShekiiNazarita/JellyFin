@@ -1,5 +1,4 @@
-import { Api } from '@jellyfin/sdk';
-import type { BaseItemPerson } from '@jellyfin/sdk/lib/generated-client/models/base-item-person';
+import type { Api } from '@jellyfin/sdk';
 import { ImageType } from '@jellyfin/sdk/lib/generated-client/models/image-type';
 import { getImageApi } from '@jellyfin/sdk/lib/utils/api/image-api';
 
@@ -13,7 +12,10 @@ import { getDataAttributes } from 'utils/items';
 import { ItemKind } from 'types/base/models/item-kind';
 import { ItemMediaKind } from 'types/base/models/item-media-kind';
 
-import type { NullableNumber, NullableString } from 'types/base/common/shared/types';
+import type {
+    NullableNumber,
+    NullableString
+} from 'types/base/common/shared/types';
 import type { ItemDto } from 'types/base/models/item-dto';
 import type { CardOptions } from 'types/cardOptions';
 import type { DataAttributes } from 'types/dataAttributes';
@@ -61,7 +63,7 @@ export function getCardLogoUrl(
 interface TextAction {
     url: string;
     title: string;
-    dataAttributes: DataAttributes
+    dataAttributes: DataAttributes;
 }
 
 export interface TextLine {
@@ -84,18 +86,16 @@ export function getTextActionButton(
 
     const url = appRouter.getRouteUrl(item);
 
-    const dataAttributes = getDataAttributes(
-        {
-            action: 'link',
-            itemServerId: serverId ?? item.ServerId,
-            itemId: item.Id,
-            itemChannelId: item.ChannelId,
-            itemType: item.Type,
-            itemMediaType: item.MediaType,
-            itemCollectionType: item.CollectionType,
-            itemIsFolder: item.IsFolder
-        }
-    );
+    const dataAttributes = getDataAttributes({
+        action: 'link',
+        itemServerId: serverId ?? item.ServerId,
+        itemId: item.Id,
+        itemChannelId: item.ChannelId,
+        itemType: item.Type,
+        itemMediaType: item.MediaType,
+        itemCollectionType: item.CollectionType,
+        itemIsFolder: item.IsFolder
+    });
 
     return {
         titleAction: {
@@ -278,6 +278,39 @@ export function getItemCounts(cardOptions: CardOptions, item: ItemDto) {
     return counts.join(', ');
 }
 
+function getPersonRoleOrType(itemType: ItemKind, itemRole: NullableString) {
+    const lines: string[] = [];
+
+    if (itemType) {
+        if (itemRole) {
+            if (
+                itemType === ItemKind.Actor
+                || itemType === ItemKind.GuestStar
+            ) {
+                // List actor roles formatted like "as Character Name"
+                lines.push(globalize.translate('PersonRole', itemRole));
+            } else if (itemRole.toLowerCase() === itemType?.toLowerCase()) {
+                // Role and Type are the same so use the localized Type
+                lines.push(globalize.translate(itemType));
+            } else if (
+                itemRole.toLowerCase().includes(itemType.toLowerCase())
+            ) {
+                // Avoid duplication if the Role includes the Type (i.e. Executive Producer)
+                lines.push(itemRole);
+            } else {
+                // Type and Role are unique so list both (i.e. Writer | Novel)
+                lines.push(globalize.translate(itemType));
+                lines.push(itemRole);
+            }
+        } else {
+            // No Role so use the localized Type
+            lines.push(globalize.translate(itemType));
+        }
+
+        return lines.join(', ');
+    }
+}
+
 export function shouldShowTitle(
     showTitle: boolean | string | undefined,
     itemType: ItemKind
@@ -296,9 +329,7 @@ export function shouldShowOtherText(
     return isOuterFooter ? !overlayText : overlayText;
 }
 
-export function shouldShowParentTitleUnderneath(
-    itemType: ItemKind
-) {
+export function shouldShowParentTitleUnderneath(itemType: ItemKind) {
     return (
         itemType === ItemKind.MusicAlbum
         || itemType === ItemKind.Audio
@@ -345,13 +376,6 @@ function shouldShowCurrentProgramTime(
     itemType: ItemKind
 ) {
     return showCurrentProgramTime && itemType === ItemKind.TvChannel;
-}
-
-function shouldShowPersonRoleOrType(
-    showPersonRoleOrType: boolean | undefined,
-    item: ItemDto
-) {
-    return showPersonRoleOrType && (item as BaseItemPerson).Role;
 }
 
 function shouldShowParentTitle(
@@ -446,13 +470,8 @@ function addOtherText(
         addTextLine({ title: getSeriesTimerChannel(item) });
     }
 
-    if (shouldShowPersonRoleOrType(cardOptions.showCurrentProgramTime, item)) {
-        addTextLine({
-            title: globalize.translate(
-                'PersonRole',
-                (item as BaseItemPerson).Role
-            )
-        });
+    if (cardOptions.showPersonRoleOrType) {
+        addTextLine({ title: getPersonRoleOrType(item.Type, item.Role) });
     }
 }
 
@@ -594,11 +613,7 @@ function getParentTitleOrTitle(
     setTitleAdded: (val: boolean) => void,
     showTitle: boolean
 ): TextLine {
-    if (
-        isOuterFooter
-        && item.Type === ItemKind.Episode
-        && item.SeriesName
-    ) {
+    if (isOuterFooter && item.Type === ItemKind.Episode && item.SeriesName) {
         if (item.SeriesId) {
             return getTextActionButton({
                 Id: item.SeriesId,

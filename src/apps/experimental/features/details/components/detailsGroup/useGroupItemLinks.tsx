@@ -1,8 +1,6 @@
 import type { NameGuidPair } from '@jellyfin/sdk/lib/generated-client/models/name-guid-pair';
-import type { BaseItemPerson } from '@jellyfin/sdk/lib/generated-client/models/base-item-person';
 import type { ExternalUrl } from '@jellyfin/sdk/lib/generated-client/models/external-url';
 import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
-import { PersonKind } from '@jellyfin/sdk/lib/generated-client/models/person-kind';
 import React from 'react';
 import { intervalToDuration } from 'date-fns';
 import datetime from 'scripts/datetime';
@@ -143,8 +141,8 @@ function getStudiosLink(
 }
 
 function getPersonsByTypeLink(
-    People: BaseItemPerson[] | null,
-    personType: PersonKind,
+    People: ItemDto[],
+    personType: ItemKind,
     context?: CollectionType,
     ServerId?: NullableString
 ): TextAction[] {
@@ -312,12 +310,12 @@ function useGroupItemLinks({ item, context }: UseGroupItemLinksdProps) {
     );
 
     const directorsActions = React.useMemo(
-        () => getPersonsByTypeLink(People, PersonKind.Director, context, ServerId),
+        () => getPersonsByTypeLink(People, ItemKind.Director, context, ServerId),
         [People, ServerId, context]
     );
 
     const writersActions = React.useMemo(
-        () => getPersonsByTypeLink(People, PersonKind.Writer, context, ServerId),
+        () => getPersonsByTypeLink(People, ItemKind.Writer, context, ServerId),
         [People, ServerId, context]
     );
 

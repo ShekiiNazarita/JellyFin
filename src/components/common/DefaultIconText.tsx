@@ -33,7 +33,7 @@ const DefaultIconText: FC<DefaultIconTextProps> = ({
                 sx={{ color: 'inherit', fontSize: '5em' }}
                 aria-hidden='true'
             >
-                {imageHelper.getItemTypeIcon(item.Type)}
+                {imageHelper.getItemTypeIcon(item.Type, defaultCardImageIcon)}
             </Icon>
         );
     }

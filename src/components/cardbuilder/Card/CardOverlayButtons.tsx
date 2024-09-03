@@ -46,7 +46,8 @@ const CardOverlayButtons: FC<CardOverlayButtonsProps> = ({
     }
 
     const url = appRouter.getRouteUrl(item, {
-        parentId: cardOptions.parentId
+        parentId: cardOptions.parentId,
+        serverId: cardOptions.serverId
     });
 
     const btnCssClass = classNames(

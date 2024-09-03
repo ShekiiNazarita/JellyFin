@@ -15,7 +15,7 @@ const Cards: FC<CardsProps> = ({ items, cardOptions = {} }) => {
 
     const renderCards = () =>
         items.map((item) => (
-            <Card key={item.Id} item={item} cardOptions={cardOptions} />
+            <Card key={`${item.Id}-${item.Type}`} item={item} cardOptions={cardOptions} />
         ));
 
     return <>{renderCards()}</>;
