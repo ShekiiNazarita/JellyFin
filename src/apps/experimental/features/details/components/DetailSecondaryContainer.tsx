@@ -10,6 +10,7 @@ import RecordingFieldsContainer from './RecordingFieldsContainer';
 import DetailsGroup from './detailsGroup/DetailsGroup';
 import type { ItemDto } from 'types/base/models/item-dto';
 import { ItemKind } from 'types/base/models/item-kind';
+import SeriesRecordingEditorContainer from './SeriesRecordingEditorContainer';
 
 interface DetailSecondaryContainerProps {
     item: ItemDto;
@@ -77,6 +78,11 @@ const DetailSecondaryContainer: FC<DetailSecondaryContainerProps> = ({
                         >
                             {SeriesAirTimeText}
                         </Typography>
+                    )}
+
+                    {item.Type === ItemKind.SeriesTimer
+                        && user?.Policy?.EnableLiveTvManagement && (
+                        <SeriesRecordingEditorContainer item={item} />
                     )}
                 </div>
 

@@ -53,7 +53,7 @@ const SeriesTimerSchedule: FC<SeriesTimerScheduleProps> = ({
                 runtime: false,
                 action: 'none',
                 moreButton: false,
-                recordButton: false,
+                recordButton: true,
                 queryKey: ['Timers']
             }}
         />
