@@ -15,7 +15,7 @@ import type { ItemDto } from 'types/base/models/item-dto';
 import type { CardOptions } from 'types/cardOptions';
 
 interface CardHoverMenuProps {
-    action: string,
+    action: string;
     item: ItemDto;
     cardOptions: CardOptions;
 }
@@ -29,7 +29,7 @@ const CardHoverMenu: FC<CardHoverMenuProps> = ({
         parentId: cardOptions.parentId
     });
     const btnCssClass =
-		'paper-icon-button-light cardOverlayButton cardOverlayButton-hover itemAction';
+        'paper-icon-button-light cardOverlayButton cardOverlayButton-hover itemAction';
 
     const centerPlayButtonClass = classNames(
         btnCssClass,
@@ -38,15 +38,19 @@ const CardHoverMenu: FC<CardHoverMenuProps> = ({
     const { IsFavorite, Played } = item.UserData ?? {};
 
     return (
-        <Box
-            className='cardOverlayContainer itemAction'
-            data-action={action}
-        >
-            <a
-                href={url}
-                aria-label={item.Name || ''}
-                className='cardImageContainer'
-            ></a>
+        <Box className='cardOverlayContainer'>
+            {action === 'edit' ? (
+                <Box
+                    className='cardImageContainer itemAction'
+                    data-action={action}
+                />
+            ) : (
+                <a
+                    href={url}
+                    aria-label={item.Name || ''}
+                    className='cardImageContainer'
+                />
+            )}
 
             {playbackManager.canPlay(item) && (
                 <PlayArrowIconButton
@@ -57,7 +61,8 @@ const CardHoverMenu: FC<CardHoverMenuProps> = ({
             )}
 
             <ButtonGroup className='cardOverlayButton-br flex'>
-                {itemHelper.canMarkPlayed(item) && cardOptions.enablePlayedButton !== false && (
+                {itemHelper.canMarkPlayed(item)
+                    && cardOptions.enablePlayedButton !== false && (
                     <PlayedButton
                         className={btnCssClass}
                         isPlayed={Played}
@@ -67,7 +72,8 @@ const CardHoverMenu: FC<CardHoverMenuProps> = ({
                     />
                 )}
 
-                {itemHelper.canRate(item) && cardOptions.enableRatingButton !== false && (
+                {itemHelper.canRate(item)
+                    && cardOptions.enableRatingButton !== false && (
                     <FavoriteButton
                         className={btnCssClass}
                         isFavorite={IsFavorite}

@@ -871,3 +871,15 @@ button::-moz-focus-inner {
     transform: scale(1.4, 1.4);
     transition: 0.2s;
 }
+
+.card-image {
+    .lazy-image,
+    .blurhash {
+        border-radius: 0.2em;
+        pointer-events: none;
+    }
+}
+
+.cursor-default {
+    cursor: default;
+}

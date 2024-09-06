@@ -70,12 +70,14 @@ export interface CardOptions {
     showSeriesTimerChannel?: boolean;
     showSongCount?: boolean;
     width?: number;
+    height?: number;
     widths?: any;
     showChannelLogo?: boolean;
     showLogo?: boolean;
     serverId?: NullableString;
     collectionId?: string | null;
     playlistId?: string | null;
+    canEditPlaylist?: boolean;
     defaultCardImageIcon?: string;
     disableHoverMenu?: boolean;
     disableIndicators?: boolean;
@@ -122,6 +124,7 @@ export interface CardOptions {
     primaryImageAspectRatio?: number | null;
     rows?: number | null;
     imageType?: ImageType;
+    disableCardFooter?: boolean;
     queryKey?: string[]
 }
 

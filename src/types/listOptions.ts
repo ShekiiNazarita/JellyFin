@@ -13,6 +13,7 @@ export interface ListOptions extends TextLineOpts {
     enableSideMediaInfo?: boolean;
     playlistId?: string | null;
     collectionId?: string | null;
+    canEditPlaylist?: boolean;
     context?: CollectionType;
     parentId?: string | null;
     border?: boolean;
@@ -39,4 +40,5 @@ export interface ListOptions extends TextLineOpts {
     enableRatingButton?: boolean;
     smallIcon?: boolean;
     sortBy?: ItemSortBy;
+    queryKey?: string[]
 }

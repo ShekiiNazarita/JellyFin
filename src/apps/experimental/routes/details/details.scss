@@ -1,0 +1,55 @@
+.item-backdrop {
+    position: relative;
+    width: 100%;
+    height: 40vh;
+
+    @media all and (max-height: 31.25em) {
+        height: 52vh;
+    }
+}
+
+.item-backdrop__container {
+    .lazy-image {
+        object-position: center center;
+        animation: backdrop-fadein 800ms ease-in normal both;
+    }
+}
+
+.layout-desktop {
+    .item-backdrop {
+        @media all and (max-width: 62.5em) {
+            height: 40vh;
+        }
+    }
+}
+
+.layout-mobile {
+    .item-backdrop {
+        margin-top: 0;
+
+        @media all and (orientation: portrait) and (max-width: 40em) {
+            height: 30vh;
+        }
+
+        &__container {
+            .lazy-image {
+                object-position: top center;
+            }
+        }
+    }
+}
+
+.nameContainer {
+    .itemName {
+        margin: 0.5em 0;
+        font-weight: 600;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        .layout-mobile & {
+            white-space: normal;
+            overflow: visible;
+        }
+    }
+}
