@@ -14,6 +14,7 @@ import DetailPrimaryContainer from 'apps/experimental/features/details/component
 import DetailSecondaryContainer from 'apps/experimental/features/details/components/DetailSecondaryContainer';
 
 import SeriesTimerSchedule from 'apps/experimental/features/details/components/section/SeriesTimerSchedule';
+import CollectionItems from 'apps/experimental/features/details/components/section/CollectionItems';
 import NextUp from 'apps/experimental/features/details/components/section/NextUp';
 import PogramGuide from 'apps/experimental/features/details/components/section/PogramGuide';
 
@@ -78,6 +79,11 @@ const Details: FC = () => {
                                         <SeriesTimerSchedule
                                             seriesTimerId={item.Id}
                                         />
+                                    )}
+
+                                    {item.IsFolder
+                                        && item.Type === ItemKind.BoxSet && (
+                                        <CollectionItems item={item} />
                                     )}
 
                                     {item.Id
