@@ -27,6 +27,7 @@ import SpecialFeatures from 'apps/experimental/features/details/components/secti
 import MusicVideos from 'apps/experimental/features/details/components/section/MusicVideos';
 import Scenes from 'apps/experimental/features/details/components/section/Scenes';
 import SimilarItems from 'apps/experimental/features/details/components/section/SimilarItems';
+import Lyrics from 'apps/experimental/features/details/components/section/Lyrics';
 
 import { ItemKind } from 'types/base/models/item-kind';
 import './details.scss';
@@ -131,6 +132,12 @@ const Details: FC = () => {
                                         />
                                     )}
 
+                                    {item.Id
+                                        && item.HasLyrics
+                                        && item.Type === ItemKind.Audio && (
+                                        <Lyrics itemId={item.Id} />
+                                    )}
+
                                     {(item.Type === ItemKind.MusicArtist
                                         || (item.Type === ItemKind.MusicAlbum
                                             && item?.AlbumArtists
@@ -149,7 +156,7 @@ const Details: FC = () => {
                                     )}
 
                                     {item.Id
-                                        && item.Type == ItemKind.Series
+                                        && item.Type === ItemKind.Series
                                         && user?.Policy
                                             ?.EnableLiveTvManagement && (
                                         <SeriesSchedule
