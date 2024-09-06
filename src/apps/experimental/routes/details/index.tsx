@@ -15,6 +15,7 @@ import DetailSecondaryContainer from 'apps/experimental/features/details/compone
 
 import SeriesTimerSchedule from 'apps/experimental/features/details/components/section/SeriesTimerSchedule';
 import NextUp from 'apps/experimental/features/details/components/section/NextUp';
+import PogramGuide from 'apps/experimental/features/details/components/section/PogramGuide';
 
 import { ItemKind } from 'types/base/models/item-kind';
 import './details.scss';
@@ -85,6 +86,10 @@ const Details: FC = () => {
                                             seriesId={item.Id}
                                             userId={user?.Id}
                                         />
+                                    )}
+
+                                    {item.Type === ItemKind.TvChannel && (
+                                        <PogramGuide item={item} />
                                     )}
                                 </div>
                             </div>
