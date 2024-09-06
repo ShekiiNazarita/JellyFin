@@ -14,6 +14,7 @@ import DetailPrimaryContainer from 'apps/experimental/features/details/component
 import DetailSecondaryContainer from 'apps/experimental/features/details/components/DetailSecondaryContainer';
 
 import SeriesTimerSchedule from 'apps/experimental/features/details/components/section/SeriesTimerSchedule';
+import NextUp from 'apps/experimental/features/details/components/section/NextUp';
 
 import { ItemKind } from 'types/base/models/item-kind';
 import './details.scss';
@@ -78,6 +79,13 @@ const Details: FC = () => {
                                         />
                                     )}
 
+                                    {item.Id
+                                        && item.Type === ItemKind.Series && (
+                                        <NextUp
+                                            seriesId={item.Id}
+                                            userId={user?.Id}
+                                        />
+                                    )}
                                 </div>
                             </div>
                         </div>
