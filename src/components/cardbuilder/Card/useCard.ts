@@ -71,7 +71,7 @@ function useCard({ item, cardOptions }: UseCardProps) {
             itemPath: item.Path,
             itemStartDate: item.StartDate,
             itemEndDate: item.EndDate,
-            itemUserData: item.UserData,
+            itemPositionticks: item.UserData?.PlaybackPositionTicks,
             prefix
         }
     );

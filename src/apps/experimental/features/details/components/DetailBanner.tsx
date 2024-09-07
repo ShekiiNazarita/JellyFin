@@ -1,4 +1,4 @@
-import React, { useEffect, type FC } from 'react';
+import React, { type FC, useEffect } from 'react';
 import { useApi } from 'hooks/useApi';
 import * as userSettings from 'scripts/settings/userSettings';
 import dom from 'scripts/dom';

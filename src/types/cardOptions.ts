@@ -27,6 +27,8 @@ export interface CardOptions {
     scalable?: boolean;
     shape?: CardShape;
     defaultShape?: CardShape;
+    backdropShape?: CardShape;
+    squareShape?: CardShape;
     lazy?: boolean;
     cardLayout?: boolean | null;
     showParentTitle?: boolean;
@@ -125,6 +127,7 @@ export interface CardOptions {
     rows?: number | null;
     imageType?: ImageType;
     disableCardFooter?: boolean;
+    displayBlock?: boolean;
     queryKey?: string[]
 }
 

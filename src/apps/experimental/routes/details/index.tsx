@@ -25,6 +25,7 @@ import CastAndCrewSection from 'apps/experimental/features/details/components/se
 import SeriesSchedule from 'apps/experimental/features/details/components/section/SeriesSchedule';
 import SpecialFeatures from 'apps/experimental/features/details/components/section/SpecialFeatures';
 import MusicVideos from 'apps/experimental/features/details/components/section/MusicVideos';
+import Scenes from 'apps/experimental/features/details/components/section/Scenes';
 
 import { ItemKind } from 'types/base/models/item-kind';
 import './details.scss';
@@ -173,6 +174,16 @@ const Details: FC = () => {
                                             itemType={item.Type}
                                             itemId={item.Id}
                                             userId={user?.Id}
+                                        />
+                                    )}
+
+                                    {item.Chapters
+                                        && item.Chapters.length > 0
+                                        && item.Chapters[0].ImageTag && (
+                                        <Scenes
+                                            chapters={item.Chapters}
+                                            item={item}
+                                            reloadItems={refetch}
                                         />
                                     )}
                                 </div>

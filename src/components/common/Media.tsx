@@ -6,11 +6,11 @@ import type { ItemDto } from 'types/base/models/item-dto';
 import { ItemKind } from 'types/base/models/item-kind';
 
 interface MediaProps {
-    item: ItemDto;
-    imgUrl: string | undefined;
-    blurhash: string | undefined;
-    imageType?: ImageType
-    defaultCardImageIcon?: string
+    item?: ItemDto;
+    imgUrl?: string;
+    blurhash?: string;
+    imageType?: ImageType;
+    defaultCardImageIcon?: string;
 }
 
 const Media: FC<MediaProps> = ({
@@ -25,7 +25,10 @@ const Media: FC<MediaProps> = ({
             className='card-image'
             imgUrl={imgUrl}
             blurhash={blurhash}
-            containImage={item.Type === ItemKind.TvChannel || imageType === ImageType.Logo}
+            containImage={
+                item?.Type === ItemKind.TvChannel
+                || imageType === ImageType.Logo
+            }
         />
     ) : (
         <DefaultIconText
