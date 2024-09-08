@@ -8,7 +8,23 @@
     }
 }
 
-.item-backdrop__container {
+.item-logo {
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 7vh;
+    display: flex;
+    margin: auto;
+    width: 19vw;
+    height: 16vh;
+
+    @media all and (max-width: 68.75em) {
+        display: none;
+    }
+}
+
+.item-backdrop__container,
+.item-logo__container {
     .lazy-image {
         object-position: center center;
         animation: backdrop-fadein 800ms ease-in normal both;
@@ -37,11 +53,15 @@
             }
         }
     }
+
+    .item-logo {
+        display: none;
+    }
 }
 
 .nameContainer {
     .itemName {
-        margin: 0.5em 0;
+        margin: 0 0 0.25em 0;
         font-weight: 600;
         white-space: nowrap;
         text-overflow: ellipsis;

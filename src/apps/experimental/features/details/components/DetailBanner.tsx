@@ -11,9 +11,13 @@ import { ItemKind } from 'types/base/models/item-kind';
 
 interface DetailsBannerProps {
     item: ItemDto;
+    detailContainerRef: React.RefObject<HTMLDivElement>;
 }
 
-const DetailsBanner: FC<DetailsBannerProps> = ({ item }) => {
+const DetailsBanner: FC<DetailsBannerProps> = ({
+    item,
+    detailContainerRef
+}) => {
     const { api } = useApi();
     const imgInfo = getItemBackdropImageUrl(item, api, false, {
         maxWidth: dom.getScreenWidth()
@@ -22,14 +26,20 @@ const DetailsBanner: FC<DetailsBannerProps> = ({ item }) => {
     const imgUrl = imgInfo.imgUrl;
 
     useEffect(() => {
+        const detailContainer = detailContainerRef.current as HTMLDivElement;
         if (!layoutManager.mobile && dom.getWindowSize().innerWidth >= 1000) {
             const isBannerEnabled =
                 !layoutManager.tv && userSettings.detailsBanner();
+
+            detailContainer.classList.toggle(
+                'noBackdropTransparency',
+                isBannerEnabled && !userSettings.enableBackdrops()
+            );
             setBackdrops([item], null, null, isBannerEnabled);
         } else {
             clearBackdrop();
         }
-    }, [item]);
+    }, [detailContainerRef, item]);
 
     return (
         <div className='item-backdrop'>

@@ -38,8 +38,7 @@ export function getItemBackdropImageUrl(
 
     if (item.Id && item.BackdropImageTags?.length) {
         const backdropImgIndex = random ?
-            randomInt(0, item.BackdropImageTags.length - 1) :
-            0;
+            randomInt(0, item.BackdropImageTags.length - 1) : 0;
         imgType = ImageType.Backdrop;
         imgIndex = backdropImgIndex;
         imgTag = item.BackdropImageTags[backdropImgIndex];
@@ -49,8 +48,7 @@ export function getItemBackdropImageUrl(
         && item.ParentBackdropImageTags?.length
     ) {
         const backdropImgIndex = random ?
-            randomInt(0, item.ParentBackdropImageTags.length - 1) :
-            0;
+            randomInt(0, item.ParentBackdropImageTags.length - 1) : 0;
         imgType = ImageType.Backdrop;
         imgIndex = backdropImgIndex;
         imgTag = item.ParentBackdropImageTags[backdropImgIndex];

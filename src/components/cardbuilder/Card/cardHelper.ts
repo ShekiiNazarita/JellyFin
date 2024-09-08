@@ -28,16 +28,22 @@ export function getCardLogoUrl(
     let imgType;
     let imgTag;
     let itemId;
-    const logoHeight = 40;
+    const logoHeight = cardOptions.height || 40;
 
     if (cardOptions.showChannelLogo && item.ChannelPrimaryImageTag) {
         imgType = ImageType.Primary;
         imgTag = item.ChannelPrimaryImageTag;
         itemId = item.ChannelId;
-    } else if (cardOptions.showLogo && item.ParentLogoImageTag) {
-        imgType = ImageType.Logo;
-        imgTag = item.ParentLogoImageTag;
-        itemId = item.ParentLogoItemId;
+    } else if (cardOptions.showLogo) {
+        if (item.ImageTags?.Logo) {
+            imgType = ImageType.Logo;
+            imgTag = item.ImageTags.Logo;
+            itemId = item.Id;
+        } else if (item.ParentLogoImageTag) {
+            imgType = ImageType.Logo;
+            imgTag = item.ParentLogoImageTag;
+            itemId = item.ParentLogoItemId;
+        }
     }
 
     if (!itemId) {
@@ -491,17 +497,17 @@ function getSeriesTimerTime(item: ItemDto) {
     }
 }
 
-function getCurrentProgramTime(CurrentProgram: ItemDto | undefined) {
-    if (CurrentProgram) {
-        return getAirTimeText(CurrentProgram, false, true) || '';
+function getCurrentProgramTime(itemCurrentProgram: ItemDto | undefined) {
+    if (itemCurrentProgram) {
+        return getAirTimeText(itemCurrentProgram, false, true) || '';
     } else {
         return '';
     }
 }
 
-function getCurrentProgramName(CurrentProgram: ItemDto | undefined) {
-    if (CurrentProgram) {
-        return CurrentProgram.Name;
+function getCurrentProgramName(itemCurrentProgram: ItemDto | undefined) {
+    if (itemCurrentProgram) {
+        return itemCurrentProgram.Name;
     } else {
         return '';
     }
@@ -533,11 +539,11 @@ function getRunTime(itemRunTimeTicks: NullableNumber) {
     }
 }
 
-function getPremiereDate(PremiereDate: string | null | undefined) {
-    if (PremiereDate) {
+function getPremiereDate(itemPremiereDate: string | null | undefined) {
+    if (itemPremiereDate) {
         try {
             return datetime.toLocaleDateString(
-                datetime.parseISO8601Date(PremiereDate),
+                datetime.parseISO8601Date(itemPremiereDate),
                 { weekday: 'long', month: 'long', day: 'numeric' }
             );
         } catch (err) {

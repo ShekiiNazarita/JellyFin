@@ -14,13 +14,13 @@ import type { ItemDto } from 'types/base/models/item-dto';
 import type { TextAction } from '../../types/TextAction';
 
 function getTagsLink(
-    Tags: string[] | null,
-    Type: ItemKind
+    itemTags: string[] | null,
+    itemType: ItemKind
 ): TextAction[] {
     const tagActions = [];
 
-    if (Tags?.length && Type !== ItemKind.Program) {
-        for (const tag of Tags) {
+    if (itemTags?.length && itemType !== ItemKind.Program) {
+        for (const tag of itemTags) {
             tagActions.push({
                 href: `#/search.html?query=${encodeURIComponent(tag)}`,
                 title: tag
@@ -32,12 +32,12 @@ function getTagsLink(
 }
 
 function getExternalUrlsLink(
-    ExternalUrls: ExternalUrl[] | null
+    itemExternalUrls: ExternalUrl[] | null
 ): TextAction[] {
     const externalActions = [];
 
-    if (ExternalUrls?.length) {
-        for (const externalUrl of ExternalUrls) {
+    if (itemExternalUrls?.length) {
+        for (const externalUrl of itemExternalUrls) {
             externalActions.push({
                 href: externalUrl.Url || '',
                 title: externalUrl.Name || '',
@@ -50,29 +50,29 @@ function getExternalUrlsLink(
     return externalActions;
 }
 
-function inferContext(Type: ItemKind) {
-    if (Type === ItemKind.Movie || Type === ItemKind.BoxSet) {
+function inferContext(itemType: ItemKind) {
+    if (itemType === ItemKind.Movie || itemType === ItemKind.BoxSet) {
         return CollectionType.Movies;
     }
 
     if (
-        Type === ItemKind.Series
-        || Type === ItemKind.Season
-        || Type === ItemKind.Episode
+        itemType === ItemKind.Series
+        || itemType === ItemKind.Season
+        || itemType === ItemKind.Episode
     ) {
         return CollectionType.Tvshows;
     }
 
     if (
-        Type === ItemKind.MusicArtist
-        || Type === ItemKind.MusicAlbum
-        || Type === ItemKind.Audio
-        || Type === ItemKind.AudioBook
+        itemType === ItemKind.MusicArtist
+        || itemType === ItemKind.MusicAlbum
+        || itemType === ItemKind.Audio
+        || itemType === ItemKind.AudioBook
     ) {
         return CollectionType.Music;
     }
 
-    if (Type === ItemKind.Program) {
+    if (itemType === ItemKind.Program) {
         return CollectionType.Livetv;
     }
 
@@ -80,27 +80,27 @@ function inferContext(Type: ItemKind) {
 }
 
 function getGenreItemsLink(
-    GenreItems: NameGuidPair[] | null,
-    Type: ItemKind,
+    itemGenreItems: NameGuidPair[] | null,
+    itemType: ItemKind,
     context?: CollectionType,
-    ServerId?: NullableString
+    itemServerId?: NullableString
 ): TextAction[] {
-    const _context = context || inferContext(Type);
-    const type = _context === CollectionType.Music ? ItemKind.MusicGenre : ItemKind.Genre;
+    const collectionType = context || inferContext(itemType);
+    const type = collectionType === CollectionType.Music ? ItemKind.MusicGenre : ItemKind.Genre;
     const genreItemsActions = [];
 
-    if (GenreItems?.length) {
-        for (const genreItem of GenreItems) {
+    if (itemGenreItems?.length) {
+        for (const genreItem of itemGenreItems) {
             genreItemsActions.push({
                 href: appRouter.getRouteUrl(
                     {
                         Name: genreItem.Name,
                         Type: type,
-                        ServerId: ServerId,
+                        ServerId: itemServerId,
                         Id: genreItem.Id
                     },
                     {
-                        context: _context
+                        context: collectionType
                     }
                 ),
                 title: genreItem.Name || ''
@@ -112,20 +112,20 @@ function getGenreItemsLink(
 }
 
 function getStudiosLink(
-    Studios: NameGuidPair[] | null,
+    itemStudios: NameGuidPair[] | null,
     context?: CollectionType,
-    ServerId?: NullableString
+    itemServerId?: NullableString
 ): TextAction[] {
     const studiosActions = [];
 
-    if (Studios?.length) {
-        for (const studio of Studios) {
+    if (itemStudios?.length) {
+        for (const studio of itemStudios) {
             studiosActions.push({
                 href: appRouter.getRouteUrl(
                     {
                         Name: studio.Name,
                         Type: ItemKind.Studio,
-                        ServerId: ServerId,
+                        ServerId: itemServerId,
                         Id: studio.Id
                     },
                     {
@@ -141,13 +141,13 @@ function getStudiosLink(
 }
 
 function getPersonsByTypeLink(
-    People: ItemDto[],
-    personType: ItemKind,
+    itemPeople: ItemDto[],
+    itempersonType: ItemKind,
     context?: CollectionType,
-    ServerId?: NullableString
+    itemServerId?: NullableString
 ): TextAction[] {
-    const Persons = (People || []).filter(function (person) {
-        return person.Type === personType;
+    const Persons = (itemPeople || []).filter(function (person) {
+        return person.Type === itempersonType;
     });
     const personsActions = [];
 
@@ -158,7 +158,7 @@ function getPersonsByTypeLink(
                     {
                         Name: person.Name,
                         Type: ItemKind.Person,
-                        ServerId: ServerId,
+                        ServerId: itemServerId,
                         Id: person.Id
                     },
                     {
@@ -174,19 +174,19 @@ function getPersonsByTypeLink(
 }
 
 function getBirthDay(
-    Type: ItemKind,
-    PremiereDate: NullableString,
-    EndDate: NullableString
+    itemType: ItemKind,
+    itemPremiereDate: NullableString,
+    itemEndDate: NullableString
 ) {
     let birthDayText;
 
-    if (Type == ItemKind.Person && PremiereDate) {
-        const birthday = datetime.parseISO8601Date(PremiereDate, true);
+    if (itemType == ItemKind.Person && itemPremiereDate) {
+        const birthday = datetime.parseISO8601Date(itemPremiereDate, true);
         const durationSinceBorn = intervalToDuration({
             start: birthday,
             end: Date.now()
         });
-        if (EndDate) {
+        if (itemEndDate) {
             birthDayText = birthday.toLocaleDateString();
         } else {
             birthDayText = `${birthday.toLocaleDateString()} ${globalize.translate(
@@ -200,24 +200,24 @@ function getBirthDay(
 }
 
 function getBirthPlace(
-    Type: ItemKind,
-    ProductionLocations: string[] | null
+    itemType: ItemKind,
+    itemProductionLocations: string[] | null
 ) {
     let birthPlaceText;
     const birthPlaceActions: TextAction[] = [];
 
-    if (Type == ItemKind.Person && ProductionLocations?.length) {
+    if (itemType == ItemKind.Person && itemProductionLocations?.length) {
         if (appHost.supports('externallinks')) {
             birthPlaceActions.push({
                 href: `https://www.openstreetmap.org/search?query=${encodeURIComponent(
-                    ProductionLocations[0]
+                    itemProductionLocations[0]
                 )}`,
-                title: ProductionLocations[0],
+                title: itemProductionLocations[0],
                 target: '_blank',
                 rel: 'noopener noreferrer'
             });
         } else {
-            birthPlaceText = ProductionLocations[0];
+            birthPlaceText = itemProductionLocations[0];
         }
     }
 
@@ -228,16 +228,16 @@ function getBirthPlace(
 }
 
 function getDeathDate(
-    Type: ItemKind,
-    PremiereDate: NullableString,
-    EndDate: NullableString
+    itemType: ItemKind,
+    itemPremiereDate: NullableString,
+    itemEndDate: NullableString
 ) {
     let deathDateText;
 
-    if (Type == ItemKind.Person && EndDate) {
-        const deathday = datetime.parseISO8601Date(EndDate, true);
-        if (PremiereDate) {
-            const birthday = datetime.parseISO8601Date(PremiereDate, true);
+    if (itemType == ItemKind.Person && itemEndDate) {
+        const deathday = datetime.parseISO8601Date(itemEndDate, true);
+        if (itemPremiereDate) {
+            const birthday = datetime.parseISO8601Date(itemPremiereDate, true);
             const durationSinceBorn = intervalToDuration({
                 start: birthday,
                 end: deathday

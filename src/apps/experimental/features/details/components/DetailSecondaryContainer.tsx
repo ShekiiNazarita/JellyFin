@@ -25,7 +25,7 @@ const DetailSecondaryContainer: FC<DetailSecondaryContainerProps> = ({
 }) => {
     const { Type, AirDays = [], AirTime, Status } = item;
 
-    const SeriesAirTimeText = React.useMemo(
+    const seriesAirTimeText = React.useMemo(
         () => getSeriesAirTime(Type, AirDays, AirTime, Status),
         [AirDays, AirTime, Status, Type]
     );
@@ -69,14 +69,14 @@ const DetailSecondaryContainer: FC<DetailSecondaryContainerProps> = ({
                         </Typography>
                     )}
 
-                    {SeriesAirTimeText && (
+                    {seriesAirTimeText && (
                         <Typography
                             id='seriesAirTime'
                             className='seriesAirTime'
                             variant='h5'
                             my={1}
                         >
-                            {SeriesAirTimeText}
+                            {seriesAirTimeText}
                         </Typography>
                     )}
 

@@ -1,5 +1,5 @@
 import type { CollectionType } from '@jellyfin/sdk/lib/generated-client';
-import React, { type FC } from 'react';
+import React, { useRef, type FC } from 'react';
 import classNames from 'classnames';
 import { useSearchParams } from 'react-router-dom';
 import { useApi } from 'hooks/useApi';
@@ -10,6 +10,7 @@ import Loading from 'components/loading/LoadingComponent';
 
 import { TrackSelectionsProvider } from 'apps/experimental/features/details/hooks/useTrackSelections';
 import DetailsBanner from 'apps/experimental/features/details/components/DetailBanner';
+import DetailLogo from 'apps/experimental/features/details/components/DetailLogo';
 import DetailPrimaryContainer from 'apps/experimental/features/details/components/DetailPrimaryContainer';
 import DetailSecondaryContainer from 'apps/experimental/features/details/components/DetailSecondaryContainer';
 
@@ -42,6 +43,7 @@ const Details: FC = () => {
     const context = searchParams.get('context') as CollectionType;
 
     const { user } = useApi();
+    const detailContainerRef = useRef<HTMLDivElement>(null);
 
     const {
         isLoading,
@@ -70,10 +72,12 @@ const Details: FC = () => {
                 'mainAnimatedPage libraryPage itemDetailPage noSecondaryNavPage selfBackdropPage'
             )}
             isBackButtonEnabled={true}
+            title={item?.Name || ''}
         >
             {isSuccess && item && (
-                <div className='detail-container'>
-                    <DetailsBanner item={item} />
+                <div ref={detailContainerRef} className='detail-container'>
+                    <DetailsBanner item={item} detailContainerRef={detailContainerRef} />
+                    <DetailLogo item={item} />
                     <TrackSelectionsProvider key={id} item={item} paramId={id}>
                         <div className='detailPageWrapperContainer'>
                             <DetailPrimaryContainer item={item} paramId={id} />

@@ -97,7 +97,9 @@ const DetailPrimaryContainer: FC<DetailPrimaryContainerProps> = ({
                     textClassName='itemName infoText parentNameLast'
                     textLineOpts={{
                         showParentTitle: true,
-                        showArtist: true
+                        showArtist: true,
+                        includeParentInfoInTitle: true,
+                        includeIndexNumber: true
                     }}
                     isLargeStyle
                 />
@@ -127,6 +129,7 @@ const DetailPrimaryContainer: FC<DetailPrimaryContainerProps> = ({
                     showChannelNumberInfo
                     showChannelInfo
                     channelInteractive
+                    showTimerIndicatorInfo
                 />
             </div>
             <div className='mainDetailButtons'>

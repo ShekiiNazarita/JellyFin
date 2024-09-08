@@ -41,9 +41,6 @@ const PlaylistViewer: FC<PlaylistViewerProps> = ({ playlistId, userId }) => {
         <SectionContainer
             isListEnabled
             className='verticalSection-extrabottompadding'
-            sectionHeaderProps={{
-                title: ''
-            }}
             itemsContainerProps={{
                 className: 'vertical-list',
                 queryKey: ['PlaylistItems'],
