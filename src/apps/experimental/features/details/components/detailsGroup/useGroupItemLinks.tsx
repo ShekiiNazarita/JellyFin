@@ -15,14 +15,18 @@ import type { TextAction } from '../../types/TextAction';
 
 function getTagsLink(
     itemTags: string[] | null,
-    itemType: ItemKind
+    itemType: ItemKind,
+    itemServerId: NullableString
 ): TextAction[] {
     const tagActions = [];
 
     if (itemTags?.length && itemType !== ItemKind.Program) {
         for (const tag of itemTags) {
             tagActions.push({
-                href: `#/search.html?query=${encodeURIComponent(tag)}`,
+                href: appRouter.getRouteUrl('tag', {
+                    tag,
+                    serverId: itemServerId
+                }),
                 title: tag
             });
         }
@@ -146,13 +150,13 @@ function getPersonsByTypeLink(
     context?: CollectionType,
     itemServerId?: NullableString
 ): TextAction[] {
-    const Persons = (itemPeople || []).filter(function (person) {
+    const persons = (itemPeople || []).filter((person) => {
         return person.Type === itempersonType;
     });
     const personsActions = [];
 
-    if (Persons) {
-        for (const person of Persons) {
+    if (persons) {
+        for (const person of persons) {
             personsActions.push({
                 href: appRouter.getRouteUrl(
                     {
@@ -290,8 +294,8 @@ function useGroupItemLinks({ item, context }: UseGroupItemLinksdProps) {
     );
 
     const tagActions = React.useMemo(
-        () => getTagsLink(Tags, Type),
-        [Tags, Type]
+        () => getTagsLink(Tags, Type, ServerId),
+        [ServerId, Tags, Type]
     );
 
     const genreItemsActions = React.useMemo(
