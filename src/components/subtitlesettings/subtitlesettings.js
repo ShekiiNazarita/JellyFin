@@ -26,6 +26,7 @@ import template from './subtitlesettings.template.html';
 
 function getSubtitleAppearanceObject(context) {
     return {
+        subtitleStyling: context.querySelector('#selectSubtitleStyling').value,
         textSize: context.querySelector('#selectTextSize').value,
         textWeight: context.querySelector('#selectTextWeight').value,
         dropShadow: context.querySelector('#selectDropShadow').value,
@@ -51,6 +52,8 @@ function loadForm(context, user, userSettings, appearanceSettings, apiClient) {
 
         context.querySelector('#selectSubtitlePlaybackMode').dispatchEvent(new CustomEvent('change', {}));
 
+        context.querySelector('#selectSubtitleStyling').value = appearanceSettings.subtitleStyling || 'Auto';
+        context.querySelector('#selectSubtitleStyling').dispatchEvent(new CustomEvent('change', {}));
         context.querySelector('#selectTextSize').value = appearanceSettings.textSize || '';
         context.querySelector('#selectTextWeight').value = appearanceSettings.textWeight || 'normal';
         context.querySelector('#selectDropShadow').value = appearanceSettings.dropShadow || '';
@@ -111,6 +114,19 @@ function onSubtitleModeChange(e) {
     view.querySelector('.subtitles' + this.value + 'Help').classList.remove('hide');
 }
 
+function onSubtitleStyleChange(e) {
+    const view = dom.parentWithClass(e.target, 'subtitlesettings');
+
+    const subtitleStylingHelperElements = view.querySelectorAll('.subtitleStylingHelp');
+    subtitleStylingHelperElements.forEach((elem)=>{
+        elem.classList.add('hide');
+    });
+    view.querySelector(`.subtitleStyling${this.value}Help`).classList.remove('hide');
+    if (this.value !== 'Native') {
+        onAppearanceFieldChange(e);
+    }
+}
+
 function onAppearanceFieldChange(e) {
     const view = dom.parentWithClass(e.target, 'subtitlesettings');
 
@@ -166,6 +182,7 @@ function embed(options, self) {
     options.element.querySelector('form').addEventListener('submit', self.onSubmit.bind(self));
 
     options.element.querySelector('#selectSubtitlePlaybackMode').addEventListener('change', onSubtitleModeChange);
+    options.element.querySelector('#selectSubtitleStyling').addEventListener('change', onSubtitleStyleChange);
     options.element.querySelector('#selectTextSize').addEventListener('change', onAppearanceFieldChange);
     options.element.querySelector('#selectTextWeight').addEventListener('change', onAppearanceFieldChange);
     options.element.querySelector('#selectDropShadow').addEventListener('change', onAppearanceFieldChange);

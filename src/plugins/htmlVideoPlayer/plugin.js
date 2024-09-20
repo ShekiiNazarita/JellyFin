@@ -1319,30 +1319,43 @@ export class HtmlVideoPlayer {
     /**
          * @private
          */
-    requiresCustomSubtitlesElement() {
-        // after a system update, ps4 isn't showing anything when creating a track element dynamically
-        // going to have to do it ourselves
-        if (browser.ps4) {
-            return true;
-        }
-
-        if (browser.web0s) {
-            return true;
-        }
-
-        if (browser.edge) {
-            return true;
-        }
-
-        if (browser.iOS) {
-            const userAgent = navigator.userAgent.toLowerCase();
-            // works in the browser but not the native app
-            if ((userAgent.includes('os 9') || userAgent.includes('os 8')) && !userAgent.includes('safari')) {
+    requiresCustomSubtitlesElement(userSettings) {
+        const subtitleAppearance = userSettings.getSubtitleAppearanceSettings();
+        switch (subtitleAppearance.subtitleStyling) {
+            case 'Native':
+                return false;
+            case 'Custom':
                 return true;
-            }
-        }
+            default:
+                // after a system update, ps4 isn't showing anything when creating a track element dynamically
+                // going to have to do it ourselves
+                if (browser.ps4) {
+                    return true;
+                }
 
-        return false;
+                if (browser.web0s) {
+                    return true;
+                }
+
+                if (browser.edge) {
+                    return true;
+                }
+
+                // font-size styling does not seem to work natively in firefox. Switching to custom subtitles element for firefox.
+                if (browser.firefox) {
+                    return true;
+                }
+
+                if (browser.iOS) {
+                    const userAgent = navigator.userAgent.toLowerCase();
+                    // works in the browser but not the native app
+                    if ((userAgent.includes('os 9') || userAgent.includes('os 8')) && !userAgent.includes('safari')) {
+                        return true;
+                    }
+                }
+
+                return false;
+        }
     }
 
     /**
@@ -1428,45 +1441,44 @@ export class HtmlVideoPlayer {
          * @private
          */
     renderTracksEvents(videoElement, track, item, targetTextTrackIndex = PRIMARY_TEXT_TRACK_INDEX) {
-        if (!itemHelper.isLocalItem(item) || track.IsExternal) {
-            const format = (track.Codec || '').toLowerCase();
-            if (format === 'ssa' || format === 'ass') {
-                this.renderSsaAss(videoElement, track, item);
-                return;
-            }
-
-            if (this.requiresCustomSubtitlesElement()) {
-                this.renderSubtitlesWithCustomElement(videoElement, track, item, targetTextTrackIndex);
-                return;
-            }
-        }
-
-        let trackElement = null;
-        const updatingTrack = videoElement.textTracks && videoElement.textTracks.length > (this.isSecondaryTrack(targetTextTrackIndex) ? 1 : 0);
-        if (updatingTrack) {
-            trackElement = videoElement.textTracks[targetTextTrackIndex];
-            // This throws an error in IE, but is fine in chrome
-            // In IE it's not necessary anyway because changing the src seems to be enough
-            try {
-                trackElement.mode = 'showing';
-                while (trackElement.cues.length) {
-                    trackElement.removeCue(trackElement.cues[0]);
+        import('../../scripts/settings/userSettings').then((userSettings) => {
+            if (!itemHelper.isLocalItem(item) || track.IsExternal) {
+                const format = (track.Codec || '').toLowerCase();
+                if (format === 'ssa' || format === 'ass') {
+                    this.renderSsaAss(videoElement, track, item);
+                    return;
                 }
-            } catch (e) {
-                console.error('error removing cue from textTrack');
+
+                if (this.requiresCustomSubtitlesElement(userSettings)) {
+                    this.renderSubtitlesWithCustomElement(videoElement, track, item, targetTextTrackIndex);
+                    return;
+                }
             }
 
-            trackElement.mode = 'disabled';
-        } else {
-            // There is a function addTextTrack but no function for removeTextTrack
-            // Therefore we add ONE element and replace its cue data
-            trackElement = videoElement.addTextTrack('subtitles', 'manualTrack', 'und');
-        }
+            let trackElement = null;
+            const updatingTrack = videoElement.textTracks && videoElement.textTracks.length > (this.isSecondaryTrack(targetTextTrackIndex) ? 1 : 0);
+            if (updatingTrack) {
+                trackElement = videoElement.textTracks[targetTextTrackIndex];
+                // This throws an error in IE, but is fine in chrome
+                // In IE it's not necessary anyway because changing the src seems to be enough
+                try {
+                    trackElement.mode = 'showing';
+                    while (trackElement.cues.length) {
+                        trackElement.removeCue(trackElement.cues[0]);
+                    }
+                } catch (e) {
+                    console.error('error removing cue from textTrack');
+                }
 
-        // download the track json
-        this.fetchSubtitles(track, item).then(function (data) {
-            import('../../scripts/settings/userSettings').then((userSettings) => {
-                // show in ui
+                trackElement.mode = 'disabled';
+            } else {
+                // There is a function addTextTrack but no function for removeTextTrack
+                // Therefore we add ONE element and replace its cue data
+                trackElement = videoElement.addTextTrack('subtitles', 'manualTrack', 'und');
+            }
+
+            // download the track json
+            this.fetchSubtitles(track, item).then(function (data) {
                 console.debug(`downloaded ${data.TrackEvents.length} track events`);
 
                 const subtitleAppearance = userSettings.getSubtitleAppearanceSettings();
