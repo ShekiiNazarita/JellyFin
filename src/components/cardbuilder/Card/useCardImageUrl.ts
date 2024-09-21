@@ -266,7 +266,7 @@ function useCardImageUrl({ item, cardOptions, shape }: UseCardImageUrlProps) {
     let height = imgInfo.height;
     const imgTag = imgInfo.imgTag;
     const imgType = imgInfo.imgType;
-    const itemId = imgInfo.itemId;
+    const itemId = imgInfo.itemId || item.Id ;
     const ratio = window.devicePixelRatio || 1;
     let imgUrl;
     let blurhash;

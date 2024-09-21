@@ -6,7 +6,6 @@ import layoutManager from '../../layoutManager';
 import type { DataAttributes } from 'types/dataAttributes';
 
 interface ListWrapperProps {
-    index: number | undefined;
     title?: string | null;
     action?: string | null;
     dataAttributes?: DataAttributes;
@@ -14,7 +13,6 @@ interface ListWrapperProps {
 }
 
 const ListWrapper: FC<PropsWithChildren<ListWrapperProps>> = ({
-    index,
     action,
     title,
     className,
@@ -24,7 +22,6 @@ const ListWrapper: FC<PropsWithChildren<ListWrapperProps>> = ({
     if (layoutManager.tv) {
         return (
             <Button
-                data-index={index}
                 className={classNames(
                     className,
                     'itemAction listItem-button listItem-focusscale'
@@ -38,7 +35,7 @@ const ListWrapper: FC<PropsWithChildren<ListWrapperProps>> = ({
         );
     } else {
         return (
-            <Box data-index={index} className={className} {...dataAttributes}>
+            <Box className={className} {...dataAttributes}>
                 {children}
             </Box>
         );

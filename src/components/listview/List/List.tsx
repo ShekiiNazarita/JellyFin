@@ -8,20 +8,17 @@ import '../../mediainfo/mediainfo.scss';
 import '../../guide/programs.scss';
 
 interface ListProps {
-    index: number;
     item: ItemDto;
     listOptions?: ListOptions;
 }
 
-const List: FC<ListProps> = ({ index, item, listOptions = {} }) => {
+const List: FC<ListProps> = ({ item, listOptions = {} }) => {
     const { getListdWrapperProps, getListContentProps } = useList({ item, listOptions } );
     const listWrapperProps = getListdWrapperProps();
     const listContentProps = getListContentProps();
 
     return (
         <ListWrapper
-            key={index}
-            index={index}
             {...listWrapperProps}
         >
             <ListContent {...listContentProps} />

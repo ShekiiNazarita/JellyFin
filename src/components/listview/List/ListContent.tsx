@@ -61,7 +61,7 @@ const ListContent: FC<ListContentProps> = ({
 
             {listOptions.showIndexNumberLeft && (
                 <Box className='listItem-indexnumberleft'>
-                    {item.IndexNumber ?? <span>&nbsp;</span>}
+                    {item.IndexNumber || <span>&nbsp;</span>}
                 </Box>
             )}
 

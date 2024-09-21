@@ -6,7 +6,7 @@ import DefaultName from './DefaultName';
 import type { ItemDto } from 'types/base/models/item-dto';
 
 interface DefaultIconTextProps {
-    item: ItemDto;
+    item?: ItemDto;
     defaultCardImageIcon?: string;
 }
 
@@ -14,7 +14,7 @@ const DefaultIconText: FC<DefaultIconTextProps> = ({
     item,
     defaultCardImageIcon
 }) => {
-    if (item.CollectionType) {
+    if (item?.CollectionType) {
         return (
             <Icon
                 className='cardImageIcon'
@@ -26,14 +26,14 @@ const DefaultIconText: FC<DefaultIconTextProps> = ({
         );
     }
 
-    if (item.Type && !(item.Type === BaseItemKind.TvChannel || item.Type === BaseItemKind.Studio )) {
+    if (item?.Type && !(item?.Type === BaseItemKind.TvChannel || item?.Type === BaseItemKind.Studio )) {
         return (
             <Icon
                 className='cardImageIcon'
                 sx={{ color: 'inherit', fontSize: '5em' }}
                 aria-hidden='true'
             >
-                {imageHelper.getItemTypeIcon(item.Type)}
+                {imageHelper.getItemTypeIcon(item.Type, defaultCardImageIcon)}
             </Icon>
         );
     }

@@ -5,18 +5,14 @@ import { isUsingLiveTvNaming } from '../cardbuilder/cardBuilderUtils';
 import type { ItemDto } from 'types/base/models/item-dto';
 
 interface DefaultNameProps {
-    item: ItemDto;
+    item?: ItemDto;
 }
 
 const DefaultName: FC<DefaultNameProps> = ({ item }) => {
-    const defaultName = isUsingLiveTvNaming(item.Type) ?
-        item.Name :
+    const defaultName = isUsingLiveTvNaming(item?.Type) ?
+        item?.Name :
         itemHelper.getDisplayName(item);
-    return (
-        <Box className='cardText cardDefaultText'>
-            {defaultName}
-        </Box>
-    );
+    return <Box className='cardText cardDefaultText'>{defaultName}</Box>;
 };
 
 export default DefaultName;

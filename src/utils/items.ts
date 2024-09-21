@@ -188,7 +188,7 @@ export function getDataAttributes(
         'data-isfolder': opts.itemIsFolder,
         'data-path': opts.itemPath,
         'data-prefix': opts.prefix,
-        'data-positionticks': opts.itemUserData?.PlaybackPositionTicks,
+        'data-positionticks': opts.itemPositionticks,
         'data-startdate': opts.itemStartDate?.toString(),
         'data-enddate': opts.itemEndDate?.toString()
     };

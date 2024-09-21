@@ -1,13 +1,45 @@
-import React, { type FC } from 'react';
+import React, { Fragment, type FC, type PropsWithChildren } from 'react';
 import { groupBy } from 'lodash-es';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import classNames from 'classnames';
 import { getIndex } from './listHelper';
-import ListGroupHeaderWrapper from './ListGroupHeaderWrapper';
 import List from './List';
 
 import type { ItemDto } from 'types/base/models/item-dto';
 import type { ListOptions } from 'types/listOptions';
 import '../listview.scss';
+
+interface ListGroupWrapperProps {
+    index?: number;
+    showIndex?: boolean;
+    itemGroupTitle: string;
+}
+
+const ListGroupWrapper: FC<PropsWithChildren<ListGroupWrapperProps>> = ({
+    index,
+    showIndex,
+    itemGroupTitle,
+    children
+}) => {
+    if (showIndex && itemGroupTitle) {
+        return (
+            <Fragment>
+                <Typography
+                    className={classNames('listGroupHeader', {
+                        'listGroupHeader-first': index === 0
+                    })}
+                    variant='h2'
+                >
+                    {itemGroupTitle}
+                </Typography>
+                <Box>{children}</Box>
+            </Fragment>
+        );
+    } else {
+        return children;
+    }
+};
 
 interface ListsProps {
     items: ItemDto[];
@@ -22,34 +54,28 @@ const Lists: FC<ListsProps> = ({ items = [], listOptions = {} }) => {
         return '';
     });
 
-    const renderListItem = (item: ItemDto, index: number) => {
+    const renderListItem = (item: ItemDto, itemGroupTitle: string) => {
         return (
             <List
-                // eslint-disable-next-line react/no-array-index-key
-                key={`${item.Id}-${index}`}
-                index={index}
+                key={`${item.Id}-${itemGroupTitle}`}
                 item={item}
                 listOptions={listOptions}
             />
         );
     };
 
-    return (
-        <>
-            {Object.entries(groupedData).map(
-                ([itemGroupTitle, getItems], index) => (
-                    // eslint-disable-next-line react/no-array-index-key
-                    <Box key={index}>
-                        {itemGroupTitle && (
-                            <ListGroupHeaderWrapper index={index}>
-                                {itemGroupTitle}
-                            </ListGroupHeaderWrapper>
-                        )}
-                        {getItems.map((item) => renderListItem(item, index))}
-                    </Box>
-                )
-            )}
-        </>
+    return Object.entries(groupedData).map(
+        ([itemGroupTitle, getItems], index) => (
+            <ListGroupWrapper
+                // eslint-disable-next-line react/no-array-index-key
+                key={index}
+                index={index}
+                showIndex={listOptions.showIndex}
+                itemGroupTitle={itemGroupTitle}
+            >
+                {getItems.map((item) => renderListItem(item, itemGroupTitle))}
+            </ListGroupWrapper>
+        )
     );
 };
 

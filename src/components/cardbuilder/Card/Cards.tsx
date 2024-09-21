@@ -7,18 +7,21 @@ import '../card.scss';
 
 interface CardsProps {
     items: ItemDto[];
-    cardOptions: CardOptions;
+    cardOptions?: CardOptions;
 }
 
-const Cards: FC<CardsProps> = ({ items, cardOptions }) => {
+const Cards: FC<CardsProps> = ({ items, cardOptions = {} }) => {
     setCardData(items, cardOptions);
 
-    const renderCards = () =>
-        items.map((item) => (
-            <Card key={item.Id} item={item} cardOptions={cardOptions} />
-        ));
+    const renderCard = (item: ItemDto) => (
+        <Card
+            key={`${item.Id}-${item.Type}`}
+            item={item}
+            cardOptions={cardOptions}
+        />
+    );
 
-    return <>{renderCards()}</>;
+    return items.map((item) => renderCard(item));
 };
 
 export default Cards;

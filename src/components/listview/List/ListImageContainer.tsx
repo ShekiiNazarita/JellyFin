@@ -47,7 +47,6 @@ const ListImageContainer: FC<ListImageContainerProps> = ({
     const imageClass = classNames(
         'listItemImage',
         { 'listItemImage-large': isLargeStyle },
-        { 'listItemImage-channel': listOptions.imageSource === 'channel' },
         { 'listItemImage-large-tv': isLargeStyle && layoutManager.tv },
         { itemAction: !clickEntireItem },
         { [getDefaultBackgroundClass(item.Name)]: !imgUrl }
@@ -71,7 +70,7 @@ const ListImageContainer: FC<ListImageContainerProps> = ({
             className={imageClass}
         >
 
-            <Media item={item} imgUrl={imgUrl} blurhash={blurhash} defaultCardImageIcon={defaultCardImageIcon} />
+            <Media item={item} imgUrl={imgUrl} blurhash={blurhash} containImage={listOptions.imageSource === 'channel'} defaultCardImageIcon={defaultCardImageIcon} />
 
             {disableIndicators !== true && mediaSourceIndicator}
 

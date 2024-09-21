@@ -1,6 +1,6 @@
-import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
 import type { DeviceInfo } from '@jellyfin/sdk/lib/generated-client/models/device-info';
 import type { SessionInfo } from '@jellyfin/sdk/lib/generated-client/models/session-info';
+import { ItemKind } from 'types/base/models/item-kind';
 
 const BASE_DEVICE_IMAGE_URL = 'assets/img/devices/';
 
@@ -104,36 +104,36 @@ export function getLibraryIcon(library: string | null | undefined) {
     }
 }
 
-export function getItemTypeIcon(itemType: BaseItemKind | string) {
+export function getItemTypeIcon(itemType: ItemKind | string, defaultCardImageIcon?: string) {
     switch (itemType) {
-        case BaseItemKind.MusicAlbum:
+        case ItemKind.MusicAlbum:
             return 'album';
-        case BaseItemKind.MusicArtist:
-        case BaseItemKind.Person:
+        case ItemKind.MusicArtist:
+        case ItemKind.Person:
             return 'person';
-        case BaseItemKind.Audio:
+        case ItemKind.Audio:
             return 'audiotrack';
-        case BaseItemKind.Movie:
+        case ItemKind.Movie:
             return 'movie';
-        case BaseItemKind.Episode:
-        case BaseItemKind.Series:
+        case ItemKind.Episode:
+        case ItemKind.Series:
             return 'tv';
-        case BaseItemKind.Program:
+        case ItemKind.Program:
             return 'live_tv';
-        case BaseItemKind.Book:
+        case ItemKind.Book:
             return 'book';
-        case BaseItemKind.Folder:
+        case ItemKind.Folder:
             return 'folder';
-        case BaseItemKind.BoxSet:
+        case ItemKind.BoxSet:
             return 'collections';
-        case BaseItemKind.Playlist:
+        case ItemKind.Playlist:
             return 'view_list';
-        case BaseItemKind.Photo:
+        case ItemKind.Photo:
             return 'photo';
-        case BaseItemKind.PhotoAlbum:
+        case ItemKind.PhotoAlbum:
             return 'photo_album';
         default:
-            return 'folder';
+            return defaultCardImageIcon || 'folder';
     }
 }
 

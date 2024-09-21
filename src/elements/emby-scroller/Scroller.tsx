@@ -9,7 +9,7 @@ import ScrollerFactory from 'lib/scroller';
 import ScrollButtons from '../emby-scrollbuttons/ScrollButtons';
 import './emby-scroller.scss';
 
-interface ScrollerProps {
+export interface ScrollerProps {
     className?: string;
     isHorizontalEnabled?: boolean;
     isMouseWheelEnabled?: boolean;
