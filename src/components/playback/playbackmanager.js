@@ -1,4 +1,5 @@
 import { PlaybackErrorCode } from '@jellyfin/sdk/lib/generated-client/models/playback-error-code.js';
+import { MediaType } from '@jellyfin/sdk/lib/generated-client/models/media-type';
 import merge from 'lodash-es/merge';
 import Screenfull from 'screenfull';
 
@@ -18,8 +19,8 @@ import { PluginType } from '../../types/plugin.ts';
 import { includesAny } from '../../utils/container.ts';
 import { getItems } from '../../utils/jellyfin-apiclient/getItems.ts';
 import { getItemBackdropImageUrl } from '../../utils/jellyfin-apiclient/backdropImage';
-import { MediaType } from '@jellyfin/sdk/lib/generated-client/models/media-type';
 
+import { bindMediaSegmentManager } from 'apps/stable/features/playback/utils/mediaSegmentManager';
 import { MediaError } from 'types/mediaError';
 import { getMediaError } from 'utils/mediaError';
 
@@ -3645,6 +3646,8 @@ export class PlaybackManager {
                 Events.on(serverNotifications, 'ServerRestarting', self.setDefaultPlayerActive.bind(self));
             });
         }
+
+        bindMediaSegmentManager(self);
     }
 
     getCurrentPlayer() {
