@@ -10,7 +10,8 @@ const getUserImage = async (
     options?: AxiosRequestConfig
 ) => {
     const { api } = apiContext;
-    if (!api) throw new Error('No API instance available');
+
+    if (!api) throw new Error('[getUserImage] No API instance available');
 
     const response = await getImageApi(api).getUserImage(params, options);
     return response.config.url;

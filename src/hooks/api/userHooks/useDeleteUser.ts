@@ -9,10 +9,10 @@ const deleteUser = async (
 ) => {
     const { api } = apiContext;
 
-    if (api) {
-        const response = await getUserApi(api).deleteUser(params);
-        return response.data;
-    }
+    if (!api) throw new Error('[deleteUser] No API instance available');
+
+    const response = await getUserApi(api).deleteUser(params);
+    return response.data;
 };
 
 export const useDeleteUser = () => {

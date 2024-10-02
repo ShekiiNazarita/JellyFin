@@ -8,7 +8,8 @@ const getPasswordResetProviders = async (
     options?: AxiosRequestConfig
 ) => {
     const { api } = apiContext;
-    if (!api) throw new Error('No API instance available');
+
+    if (!api) throw new Error('[getPasswordResetProviders] No API instance available');
 
     const response = await getSessionApi(api).getPasswordResetProviders(
         options

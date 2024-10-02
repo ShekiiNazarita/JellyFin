@@ -10,7 +10,8 @@ const getChannels = async (
     options?: AxiosRequestConfig
 ) => {
     const { api } = apiContext;
-    if (!api) throw new Error('No API instance available');
+
+    if (!api) throw new Error('[getChannels] No API instance available');
 
     const response = await getChannelsApi(api).getChannels(params, options);
     return response.data.Items || [];

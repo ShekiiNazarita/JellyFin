@@ -10,7 +10,8 @@ const getDevices = async (
     options?: AxiosRequestConfig
 ) => {
     const { api } = apiContext;
-    if (!api) throw new Error('No API instance available');
+
+    if (!api) throw new Error('[getDevices] No API instance available');
 
     const response = await getDevicesApi(api).getDevices(params, options);
     return response.data.Items || [];

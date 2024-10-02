@@ -9,10 +9,10 @@ const updateUserPolicy = async (
 ) => {
     const { api } = apiContext;
 
-    if (api) {
-        const response = await getUserApi(api).updateUserPolicy(params);
-        return response.data;
-    }
+    if (!api) throw new Error('[updateUserPolicy] No API instance available');
+
+    const response = await getUserApi(api).updateUserPolicy(params);
+    return response.data;
 };
 
 export const useUpdateUserPolicy = () => {

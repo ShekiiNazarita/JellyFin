@@ -9,10 +9,10 @@ const deleteUserImage = async (
 ) => {
     const { api } = apiContext;
 
-    if (api) {
-        const response = await getImageApi(api).deleteUserImage(params);
-        return response.data;
-    }
+    if (!api) throw new Error('[deleteUserImage] No API instance available');
+
+    const response = await getImageApi(api).deleteUserImage(params);
+    return response.data;
 };
 
 export const useDeleteUserImage = () => {

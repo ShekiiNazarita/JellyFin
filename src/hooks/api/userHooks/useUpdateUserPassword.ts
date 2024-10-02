@@ -9,10 +9,10 @@ const updateUserPassword = async (
 ) => {
     const { api } = apiContext;
 
-    if (api) {
-        const response = await getUserApi(api).updateUserPassword(params);
-        return response.data;
-    }
+    if (!api) throw new Error('[updateUserPassword] No API instance available');
+
+    const response = await getUserApi(api).updateUserPassword(params);
+    return response.data;
 };
 
 export const useUpdateUserPassword = () => {

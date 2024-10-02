@@ -10,7 +10,8 @@ const getUsers = async (
     options?: AxiosRequestConfig
 ) => {
     const { api } = apiContext;
-    if (!api) throw new Error('No API instance available');
+
+    if (!api) throw new Error('[getUsers] No API instance available');
 
     const response = await getUserApi(api).getUsers(params, options);
     return response.data;

@@ -9,10 +9,10 @@ const createUserByName = async (
 ) => {
     const { api } = apiContext;
 
-    if (api) {
-        const response = await getUserApi(api).createUserByName(params);
-        return response.data;
-    }
+    if (!api) throw new Error('[createUserByName] No API instance available');
+
+    const response = await getUserApi(api).createUserByName(params);
+    return response.data;
 };
 
 export const useCreateUserByName = () => {

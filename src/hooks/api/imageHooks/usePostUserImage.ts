@@ -11,10 +11,10 @@ const postUserImage = async (
 ) => {
     const { api } = apiContext;
 
-    if (api) {
-        const response = await getImageApi(api).postUserImage(params, options);
-        return response.data;
-    }
+    if (!api) throw new Error('[postUserImage] No API instance available');
+
+    const response = await getImageApi(api).postUserImage(params, options);
+    return response.data;
 };
 
 export const usePostUserImage = () => {

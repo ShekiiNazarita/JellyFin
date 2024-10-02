@@ -10,8 +10,9 @@ const getUserById = async (
     options?: AxiosRequestConfig
 ) => {
     const { api } = apiContext;
-    if (!api) throw new Error('No API instance available');
-    if (!userId) throw new Error('No User ID provided');
+
+    if (!api) throw new Error('[getUserById] No API instance available');
+    if (!userId) throw new Error('[getUserById] No User ID provided');
 
     const response = await getUserApi(api).getUserById({ userId }, options);
     return response.data;

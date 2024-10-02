@@ -9,10 +9,10 @@ const updateUser = async (
 ) => {
     const { api } = apiContext;
 
-    if (api) {
-        const response = await getUserApi(api).updateUser(params);
-        return response.data;
-    }
+    if (!api) throw new Error('[updateUser] No API instance available');
+
+    const response = await getUserApi(api).updateUser(params);
+    return response.data;
 };
 
 export const useUpdateUser = () => {

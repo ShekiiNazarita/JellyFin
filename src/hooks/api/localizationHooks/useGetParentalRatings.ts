@@ -32,7 +32,8 @@ const getParentalRatings = async (
     options?: AxiosRequestConfig
 ) => {
     const { api } = apiContext;
-    if (!api) throw new Error('No API instance available');
+
+    if (!api) throw new Error('[getParentalRatings] No API instance available');
 
     const response = await getLocalizationApi(api).getParentalRatings(options);
     return groupRating(response.data || []);
