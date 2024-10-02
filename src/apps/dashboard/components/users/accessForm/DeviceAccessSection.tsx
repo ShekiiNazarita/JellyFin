@@ -1,12 +1,12 @@
 import type { UserDto } from '@jellyfin/sdk/lib/generated-client/models/user-dto';
-import type { DeviceInfo } from '@jellyfin/sdk/lib/generated-client/models/device-info';
+import type { DeviceInfoDto } from '@jellyfin/sdk/lib/generated-client/models/device-info-dto';
 import React, { type FC } from 'react';
 import Box from '@mui/material/Box';
 import SelectAllLibraryAccess from '../SelectAllLibraryAccess';
 import SelectLibraryAccessList from '../SelectLibraryAccessList';
 
 interface DeviceAccessSectionProps {
-    devices: DeviceInfo[] | undefined;
+    devices: DeviceInfoDto[] | undefined;
     currentUser: UserDto;
     setCurrentUser: React.Dispatch<React.SetStateAction<UserDto>>;
 }

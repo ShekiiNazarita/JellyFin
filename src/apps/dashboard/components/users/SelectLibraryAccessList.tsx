@@ -1,6 +1,6 @@
 import type { UserDto } from '@jellyfin/sdk/lib/generated-client/models/user-dto';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
-import type { DeviceInfo } from '@jellyfin/sdk/lib/generated-client/models/device-info';
+import type { DeviceInfoDto } from '@jellyfin/sdk/lib/generated-client/models/device-info-dto';
 import React, { type FC, useCallback } from 'react';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
@@ -18,7 +18,7 @@ interface SelectLibraryAccessListProps {
     title: string;
     subTitle: string;
     policyKey: PolicyKey;
-    items: BaseItemDto[] | DeviceInfo[] | undefined;
+    items: BaseItemDto[] | DeviceInfoDto[] | undefined;
     currentUser: UserDto;
     setCurrentUser: React.Dispatch<React.SetStateAction<UserDto>>;
 }
@@ -82,7 +82,7 @@ const SelectLibraryAccessList: FC<SelectLibraryAccessListProps> = ({
                                     value={item.Id}
                                 />
                             }
-                            label={getTitle(item.Name, (item as DeviceInfo)?.AppName )}
+                            label={getTitle(item.Name, (item as DeviceInfoDto)?.AppName )}
                         />
                     ))}
                 </FormGroup>
