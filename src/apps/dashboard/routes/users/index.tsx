@@ -10,7 +10,7 @@ import { userHooks } from 'hooks/api';
 import Loading from 'components/loading/LoadingComponent';
 import globalize from 'lib/globalize';
 import Page from 'components/Page';
-import UserCardBox from 'apps/dashboard/components/users/UserCardBox';
+import UserCardBox from 'apps/dashboard/features/users/components/UserCardBox';
 import 'elements/emby-button/emby-button';
 import 'elements/emby-button/paper-icon-button-light';
 import 'components/cardbuilder/card.scss';

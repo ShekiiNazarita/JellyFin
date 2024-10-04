@@ -7,7 +7,6 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import type { SelectChangeEvent } from '@mui/material/Select';
 import globalize from 'lib/globalize';
 import {
     sessionHooks,
@@ -21,7 +20,7 @@ import PlaybackSection from './PlaybackSection';
 import RemoteClientBitrateLimitSection from './RemoteClientBitrateLimitSection';
 import RemoteControlSection from './RemoteControlSection';
 import AdvancedControlSection from './AdvancedControlSection';
-import UserContentDeletionSection from './UserContentDeletionSection';
+import LibraryContentDeletionSection from './LibraryContentDeletionSection';
 import SelectSyncPlayAccess from './SelectSyncPlayAccess';
 import SelectLoginProvider from './SelectLoginProvider';
 import SelectPasswordResetProvider from './SelectPasswordResetProvider';
@@ -83,37 +82,13 @@ const UserProfileForm: FC<UserProfileFormProps> = ({
         [setCurrentUser]
     );
 
-    const onSelectChange = useCallback(
-        (event: SelectChangeEvent<string>) => {
-            const target = event.target;
-            const name = target.name;
-            const value = target.value;
-            setCurrentUser((prevState) => ({
-                ...prevState,
-                Policy: {
-                    ...prevState?.Policy,
-                    AuthenticationProviderId:
-                        prevState.Policy?.AuthenticationProviderId || '',
-                    PasswordResetProviderId:
-                        prevState.Policy?.PasswordResetProviderId || '',
-                    [name]: value
-                }
-            }));
-        },
-        [setCurrentUser]
-    );
-
     const onBtnCancelClick = useCallback(() => {
         navigate(-1);
     }, [navigate]);
 
     return (
-        <Stack
-            component='form'
-            spacing={2}
-            onSubmit={onFormSubmit}
-        >
-            {currentUser?.Policy?.IsDisabled ? (
+        <Stack component='form' spacing={2} onSubmit={onFormSubmit}>
+            {currentUser?.Policy?.IsDisabled && (
                 <Box id='disabledUserBanner'>
                     <Typography variant='h2' color={'red'}>
                         {globalize.translate(
@@ -124,7 +99,7 @@ const UserProfileForm: FC<UserProfileFormProps> = ({
                         {globalize.translate('MessageReenableUser')}
                     </Typography>
                 </Box>
-            ) : null}
+            )}
 
             <TextField
                 id='txtUserName'
@@ -137,25 +112,26 @@ const UserProfileForm: FC<UserProfileFormProps> = ({
                 required
             />
 
-            {authProviders && authProviders.length > 1 ? (
+            {authProviders && authProviders.length > 1 && (
                 <SelectLoginProvider
                     authProviders={authProviders}
                     currentUser={currentUser}
-                    onSelectChange={onSelectChange}
+                    onFormChange={onFormChange}
                 />
-            ) : null}
+            )}
 
-            {passwordResetProviders
-                && passwordResetProviders?.length > 1 ? (
-                    <SelectPasswordResetProvider
-                        passwordResetProviders={passwordResetProviders}
-                        currentUser={currentUser}
-                        onSelectChange={onSelectChange}
-                    />
-                ) : null}
+            {passwordResetProviders && passwordResetProviders?.length > 1 && (
+                <SelectPasswordResetProvider
+                    passwordResetProviders={passwordResetProviders}
+                    currentUser={currentUser}
+                    onFormChange={onFormChange}
+                />
+            )}
 
             <UserPermissionsSection
-                enableRemoteAccess={(config as NetworkConfiguration)?.EnableRemoteAccess}
+                enableRemoteAccess={
+                    (config as NetworkConfiguration)?.EnableRemoteAccess
+                }
                 currentUser={currentUser}
                 onFormChange={onFormChange}
             />
@@ -177,10 +153,10 @@ const UserProfileForm: FC<UserProfileFormProps> = ({
 
             <SelectSyncPlayAccess
                 currentUser={currentUser}
-                onSelectChange={onSelectChange}
+                onFormChange={onFormChange}
             />
 
-            <UserContentDeletionSection
+            <LibraryContentDeletionSection
                 mediaFolders={mediaFolders}
                 channels={channels}
                 currentUser={currentUser}

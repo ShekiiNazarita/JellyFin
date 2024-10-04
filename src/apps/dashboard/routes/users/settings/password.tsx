@@ -2,7 +2,7 @@ import React, { type FC } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { useApi } from 'hooks/useApi';
-import UserPasswordForm from 'apps/dashboard/components/users/passwordForm';
+import UserPasswordForm from 'apps/dashboard/features/users/components/passwordForm';
 import type { UserContextType } from './type';
 
 const UserPassword: FC = () => {

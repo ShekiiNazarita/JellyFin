@@ -9,7 +9,7 @@ import { userHooks } from 'hooks/api';
 import globalize from 'lib/globalize';
 import toast from 'components/toast/toast';
 import Page from 'components/Page';
-import UserNewProfileForm from 'apps/dashboard/components/users/addForm';
+import UserNewProfileForm from 'apps/dashboard/features/users/components/addForm';
 
 const UserNew: FC = () => {
     const [userInput, setUserInput] = useState<CreateUserByName>({

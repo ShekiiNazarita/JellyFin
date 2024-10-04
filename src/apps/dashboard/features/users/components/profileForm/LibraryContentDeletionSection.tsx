@@ -12,14 +12,14 @@ const getMergedItems = (
     return [...mediaFolders, ...channels];
 };
 
-interface UserContentDeletionSectionProps {
+interface LibraryContentDeletionSectionProps {
     mediaFolders: BaseItemDto[] | undefined;
     channels: BaseItemDto[] | undefined;
     currentUser: UserDto;
     setCurrentUser: React.Dispatch<React.SetStateAction<UserDto>>;
 }
 
-const UserContentDeletionSection: FC<UserContentDeletionSectionProps> = ({
+const LibraryContentDeletionSection: FC<LibraryContentDeletionSectionProps> = ({
     mediaFolders = [],
     channels = [],
     currentUser,
@@ -43,7 +43,7 @@ const UserContentDeletionSection: FC<UserContentDeletionSectionProps> = ({
                 <SelectLibraryAccessList
                     policyKey={'EnableContentDeletionFromFolders'}
                     title={'HeaderLibraries'}
-                    subTitle={'LibraryAccessHelp'}
+                    subTitle={'LibraryContentDeletionHelp'}
                     items={items}
                     currentUser={currentUser}
                     setCurrentUser={setCurrentUser}
@@ -53,4 +53,4 @@ const UserContentDeletionSection: FC<UserContentDeletionSectionProps> = ({
     );
 };
 
-export default UserContentDeletionSection;
+export default LibraryContentDeletionSection;

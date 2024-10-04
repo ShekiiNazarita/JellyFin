@@ -7,7 +7,7 @@ import Link from '@mui/material/Link';
 import { userHooks } from 'hooks/api';
 import toast from 'components/toast/toast';
 import globalize from 'lib/globalize';
-import UserProfileForm from 'apps/dashboard/components/users/profileForm';
+import UserProfileForm from 'apps/dashboard/features/users/components/profileForm';
 import type { UserContextType } from './type';
 
 const UserProfile: FC = () => {

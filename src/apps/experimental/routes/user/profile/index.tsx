@@ -15,7 +15,7 @@ import confirm from 'components/confirm/confirm';
 import toast from 'components/toast/toast';
 import Page from 'components/Page';
 import Loading from 'components/loading/LoadingComponent';
-import UserPasswordForm from 'apps/dashboard/components/users/passwordForm';
+import UserPasswordForm from 'apps/dashboard/features/users/components/passwordForm';
 
 const UserProfile: FC = () => {
     const [searchParams] = useSearchParams();

@@ -14,6 +14,16 @@ import globalize from 'lib/globalize';
 
 type PolicyKey = 'EnabledFolders' | 'EnabledChannels' | 'EnabledDevices' | 'EnableContentDeletionFromFolders';
 
+function getTitle(item: BaseItemDto | DeviceInfoDto) {
+    let title = (item as DeviceInfoDto)?.CustomName || item.Name;
+    const appName = (item as DeviceInfoDto)?.AppName;
+
+    if (appName) {
+        title += ' - ' + appName;
+    }
+    return title;
+}
+
 interface SelectLibraryAccessListProps {
     title: string;
     subTitle: string;
@@ -21,14 +31,6 @@ interface SelectLibraryAccessListProps {
     items: BaseItemDto[] | DeviceInfoDto[] | undefined;
     currentUser: UserDto;
     setCurrentUser: React.Dispatch<React.SetStateAction<UserDto>>;
-}
-
-function getTitle(name: string | null | undefined, appName: string | null | undefined) {
-    let title = name;
-    if (appName) {
-        title += ' - ' + appName;
-    }
-    return title;
 }
 
 const SelectLibraryAccessList: FC<SelectLibraryAccessListProps> = ({
@@ -82,7 +84,7 @@ const SelectLibraryAccessList: FC<SelectLibraryAccessListProps> = ({
                                     value={item.Id}
                                 />
                             }
-                            label={getTitle(item.Name, (item as DeviceInfoDto)?.AppName )}
+                            label={getTitle(item)}
                         />
                     ))}
                 </FormGroup>

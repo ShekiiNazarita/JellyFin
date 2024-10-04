@@ -9,12 +9,6 @@ import ListItemText from '@mui/material/ListItemText';
 import datetime from 'scripts/datetime';
 import globalize from 'lib/globalize';
 
-interface AccessScheduleListProps {
-    index: number;
-    accessSchedule: AccessSchedule;
-    currentUser: UserDto;
-    setCurrentUser: React.Dispatch<React.SetStateAction<UserDto>>;
-}
 function getDisplayTime(hours = 0) {
     let minutes = 0;
     const pct = hours % 1;
@@ -24,6 +18,13 @@ function getDisplayTime(hours = 0) {
     }
 
     return datetime.getDisplayTime(new Date(2000, 1, 1, hours, minutes, 0, 0));
+}
+
+interface AccessScheduleListProps {
+    index: number;
+    accessSchedule: AccessSchedule;
+    currentUser: UserDto;
+    setCurrentUser: React.Dispatch<React.SetStateAction<UserDto>>;
 }
 
 const AccessScheduleList: FC<AccessScheduleListProps> = ({

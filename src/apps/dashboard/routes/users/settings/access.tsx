@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import { userHooks } from 'hooks/api';
 import globalize from 'lib/globalize';
 import toast from 'components/toast/toast';
-import UserLibraryAccessForm from 'apps/dashboard/components/users/accessForm';
+import UserLibraryAccessForm from 'apps/dashboard/features/users/components/accessForm';
 import type { UserContextType } from './type';
 
 const UserLibraryAccess: FC = () => {

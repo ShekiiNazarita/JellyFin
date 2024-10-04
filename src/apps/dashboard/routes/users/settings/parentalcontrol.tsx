@@ -6,7 +6,7 @@ import { userHooks } from 'hooks/api';
 import Box from '@mui/material/Box';
 import globalize from 'lib/globalize';
 import toast from 'components/toast/toast';
-import UserParentalControlForm from 'apps/dashboard/components/users/parentalcontrolForm';
+import UserParentalControlForm from 'apps/dashboard/features/users/components/parentalcontrolForm';
 import type { UserContextType } from './type';
 
 const UserParentalControl: FC = () => {

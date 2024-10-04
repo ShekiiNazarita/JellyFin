@@ -6,7 +6,7 @@ import Stack from '@mui/material/Stack';
 import { localizationHooks } from 'hooks/api';
 import globalize from 'lib/globalize';
 import Loading from 'components/loading/LoadingComponent';
-import MaxParentalRatingSetting from './SelectMaxParentalRating';
+import MaxParentalRatingSetting from './MaxParentalRatingSetting';
 import BlockUnratedItemsSetting from './BlockUnratedItemsSetting';
 import TagsSetting from './TagsSetting';
 import AccessScheduleSetting from './AccessScheduleSetting';
@@ -26,6 +26,7 @@ const UserParentalControlForm: FC<UserParentalControlFormProps> = ({
         localizationHooks.useGetParentalRatings();
 
     if (isLoading) return <Loading />;
+
     return (
         <Stack
             component='form'
@@ -33,7 +34,7 @@ const UserParentalControlForm: FC<UserParentalControlFormProps> = ({
             onSubmit={onFormSubmit}
         >
             <MaxParentalRatingSetting
-                parentalRatings={parentalRatings}
+                parentalRatings={parentalRatings || []}
                 currentUser={currentUser}
                 setCurrentUser={setCurrentUser}
             />
