@@ -110,6 +110,9 @@ build: ${__JF_BUILD_VERSION__}`);
         Events.on(apiClient, 'requestfail', appRouter.onRequestFail);
     });
 
+    // Listen for route changes
+    appRouter.listen();
+
     // Render the app
     await renderApp();
 
