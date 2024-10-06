@@ -103,8 +103,7 @@ class AppRouter {
     listen() {
         let lastPath = history.location.pathname + history.location.search;
 
-        history.listen(params => {
-            const location = params.location;
+        history.listen(({ location }) => {
             const normalizedPath = location.pathname.replace(/^!/, '');
             const fullPath = normalizedPath + location.search;
 
