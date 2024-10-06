@@ -100,6 +100,23 @@ class AppRouter {
         return this.promiseShow;
     }
 
+    listen() {
+        let lastPath = history.location.pathname + history.location.search;
+
+        history.listen(params => {
+            const location = params.location;
+            const normalizedPath = location.pathname.replace(/^!/, '');
+            const fullPath = normalizedPath + location.search;
+
+            if (fullPath == lastPath) {
+                console.debug('[appRouter] path did not change, resolving promise');
+                this.onViewShow();
+            }
+
+            lastPath = fullPath;
+        });
+    }
+
     baseUrl() {
         return this.baseRoute;
     }
