@@ -39,7 +39,7 @@ export interface PlaybackSubscriber {
 }
 
 export abstract class PlaybackSubscriber {
-    private player: Plugin | undefined;
+    protected player: Plugin | undefined;
 
     private readonly playbackManagerEvents = {
         [PlaybackManagerEvent.PlaybackCancelled]: this.onPlaybackCancelled,
@@ -87,7 +87,7 @@ export abstract class PlaybackSubscriber {
 
         if (this.player) {
             Object.entries(this.playerEvents).forEach(([event, handler]) => {
-                if (handler) Events.off(this.player, event, handler);
+                if (handler) Events.off(this.player, event, handler.bind(this));
             });
         }
 
@@ -95,7 +95,7 @@ export abstract class PlaybackSubscriber {
         if (!this.player) return;
 
         Object.entries(this.playerEvents).forEach(([event, handler]) => {
-            if (handler) Events.on(this.player, event, handler);
+            if (handler) Events.on(this.player, event, handler.bind(this));
         });
     }
 }
